@@ -3,8 +3,4 @@ mono: none
 sudo: required
 dotnet: 2.2
 script:
-    - dotnet build Inpainting
-    - dotnet build Inpainting.UnitTests
-    - dotnet test Inpainting.UnitTests
-    - dotnet build Samples/Inpaint
-    - dotnet build Samples/InpaintHTTP
+    - dotnet build
