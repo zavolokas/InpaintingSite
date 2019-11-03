@@ -10,7 +10,6 @@
                .UseContentRoot(Directory.GetCurrentDirectory())
                .UseKestrel()
                .UseStartup<Startup>()
-               .UseUrls("http://localhost:8069")
                .Build();
 
             host.Run();

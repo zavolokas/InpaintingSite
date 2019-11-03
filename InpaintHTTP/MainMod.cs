@@ -20,6 +20,7 @@ namespace InpaintHTTP
         {
             Post("/api/inpaint", async x =>
             {
+                try{
                 Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] Incomming request from " + this.Request.UserHostAddress);
                 if (this.Request.Files.Count() < 2)
                 {
@@ -73,6 +74,12 @@ namespace InpaintHTTP
                 Stream stream = new MemoryStream(finalResult.GetBytes());
                 //return this.Response.FromStream(stream, "image/png");
                 return Convert.ToBase64String(finalResult.GetBytes()); //this does the job ¯\_(ツ)_/¯
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return null;
+                }
             });
 
             Get(@"/", _ =>
