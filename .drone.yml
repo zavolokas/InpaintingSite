@@ -26,7 +26,7 @@ steps:
       branch: [ master ]
       event: [ tag ] # step only triggers on push events
 
-  - name: validate-cf
+  - name: validate-cluster-cf
     image: robertstettner/drone-cloudformation
     settings:
       mode: validate
@@ -40,12 +40,44 @@ steps:
       branch: [drone-cf]
       event: [push]
 
-  - name: create-update-cf-stack
+  - name: create-update-cluster-cf-stack
     image: robertstettner/drone-cloudformation
     settings:
       pull: true
       stackname: inpainter-cluster-stack
       template: cloudformation/cluster.yml
+      region: eu-west-1
+      access_key: 
+        from_secret: AWS_ACCESS_KEY
+      secret_key:
+        from_secret: AWS_SECRET_KEY
+      params:
+        Version: 1
+        Environment: staging
+    when:
+      branch: [drone-cf]
+      event: [push]
+
+  - name: validate-service-cf
+    image: robertstettner/drone-cloudformation
+    settings:
+      mode: validate
+      stackname: inpainter-service
+      template: cloudformation/service.yml
+      access_key: 
+        from_secret: AWS_ACCESS_KEY
+      secret_key:
+        from_secret: AWS_SECRET_KEY
+    when:
+      branch: [drone-cf]
+      event: [push]
+
+  - name: create-update-service-cf-stack
+    image: robertstettner/drone-cloudformation
+    settings:
+      pull: true
+      stackname: inpainter-service-stack
+      template: cloudformation/service.yml
       region: eu-west-1
       access_key: 
         from_secret: AWS_ACCESS_KEY
