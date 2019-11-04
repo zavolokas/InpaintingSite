@@ -44,9 +44,9 @@ steps:
     image: robertstettner/drone-cloudformation
     settings:
       pull: true
-      stackname: app-ecs-cfn-stack
+      stackname: inpainter-cluster-stack
       template: cloudformation/cluster.yml
-      region: us-east-1
+      region: eu-west-1
       access_key: 
         from_secret: AWS_ACCESS_KEY
       secret_key:
@@ -68,7 +68,7 @@ steps:
       from_secret: SERVICE_NAME
     cluster:
       from_secret: CLUSTER_NAME  
-    region: eu-west-2
+    region: eu-west-1
     family: inpainter
     docker_image: docker.io/zavolokas/inpainter
     image_tag: latest
@@ -92,7 +92,7 @@ steps:
   #   service: 
   #     from_secret: SERVICE_NAME
   #   image_name: docker.io/zavolokas/inpainter:latest
-  #   aws_region: eu-west-2 # defaults to us-east-1
+  #   aws_region: eu-west-1 # defaults to eu-west-1
   #   # timeout: "600" # defaults to 300 / 5 min
   #   # max: "200" # defaults to 200
   #   # min: "100" # defaults to 100
@@ -114,7 +114,7 @@ steps:
   #     from_secret: SERVICE_NAME
   #   cluster:
   #     from_secret: CLUSTER_NAME  
-  #   region: eu-west-2
+  #   region: eu-west-1
   #   family: inpainter
   #   docker_image: docker.io/zavolokas/inpainter
   #   image_tag: latest
