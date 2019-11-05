@@ -13,15 +13,15 @@ steps:
   - name: publish-docker-image
     image: plugins/docker
     settings:
-      username: 
+      username:
         from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
-      password: 
+      password:
         from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
       repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
       tags: 
         - latest
         - ${DRONE_TAG}
-      #dockerfile: Dockerfile
+      dockerfile: Dockerfile
     when:
       branch: [ drone-cf ]
       event: [ push ] # step only triggers on push events
@@ -91,37 +91,37 @@ steps:
   #     branch: [drone-cf]
   #     event: [push]
 
-  - name: deploy-to-ecs
-    image: peloton/drone-ecs
-    settings:
-      access_key:
-        from_secret: AWS_ACCESS_KEY
-      secret_key:
-        from_secret: AWS_SECRET_KEY
-      service: arn:aws:ecs:eu-west-1:486687584209:service/inpainter-srv
-      cluster: inpainter-cluster
-      region: eu-west-1
-      family: inpainter
-      docker_image: docker.io/zavolokas/inpainter
-      image_tag: latest
-      deployment_configuration: 50 200
-      task_network_mode: "awsvpc"
-      container_name: inpainter-srv-container
-      compatibilities: [ "FARGATE" ]
-      task_cpu: 1024 # cpu & memory are related - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
-      task_memory: 2048
-      service_network_subnets:
-        # # public subnets
-        #   - subnet-0533aa209b81c1090
-        #   - subnet-0854ca47efd0404be	
-        # private subnets
-        - subnet-0666d7e23ae7e5646
-        - subnet-02c4f0a7bbe07b8df
-      port_mappings:
-        - 80 80
-    when:
-      branch: [drone-cf]
-      event: [push]
+  # - name: deploy-to-ecs
+  #   image: peloton/drone-ecs
+  #   settings:
+  #     access_key:
+  #       from_secret: AWS_ACCESS_KEY
+  #     secret_key:
+  #       from_secret: AWS_SECRET_KEY
+  #     service: arn:aws:ecs:eu-west-1:486687584209:service/inpainter-srv
+  #     cluster: inpainter-cluster
+  #     region: eu-west-1
+  #     family: inpainter
+  #     docker_image: docker.io/zavolokas/inpainter
+  #     image_tag: latest
+  #     deployment_configuration: 50 200
+  #     task_network_mode: "awsvpc"
+  #     container_name: inpainter-srv-container
+  #     compatibilities: [ "FARGATE" ]
+  #     task_cpu: 1024 # cpu & memory are related - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
+  #     task_memory: 2048
+  #     service_network_subnets:
+  #       # # public subnets
+  #       #   - subnet-0533aa209b81c1090
+  #       #   - subnet-0854ca47efd0404be	
+  #       # private subnets
+  #       - subnet-0666d7e23ae7e5646
+  #       - subnet-02c4f0a7bbe07b8df
+  #     port_mappings:
+  #       - 80 80
+  #   when:
+  #     branch: [drone-cf]
+  #     event: [push]
 
 
   # deploy:
