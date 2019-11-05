@@ -3,28 +3,28 @@ type: docker
 name: default
 
 steps:
-  # - name: build
-  #   image: microsoft/dotnet:2.0-sdk
-  #   commands:
-  #     - dotnet build -c Release
-  #   when:
-  #     event: [push]
+  - name: build
+    image: microsoft/dotnet:2.0-sdk
+    commands:
+      - dotnet build -c Release
+    when:
+      event: [push]
 
-  # - name: publish-docker-image
-  #   image: plugins/docker
-  #   settings:
-  #     username: 
-  #       from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
-  #     password: 
-  #       from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
-  #     repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
-  #     tags: 
-  #       - latest
-  #       - ${DRONE_TAG}
-  #     #dockerfile: Dockerfile
-  #   when:
-  #     branch: [ master ]
-  #     event: [ tag ] # step only triggers on push events
+  - name: publish-docker-image
+    image: plugins/docker
+    settings:
+      username: 
+        from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
+      password: 
+        from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
+      repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
+      tags: 
+        - latest
+        - ${DRONE_TAG}
+      #dockerfile: Dockerfile
+    when:
+      branch: [ master ]
+      event: [ tag ] # step only triggers on push events
 
   # - name: validate-cluster-cf
   #   image: robertstettner/drone-cloudformation
