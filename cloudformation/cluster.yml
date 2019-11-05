@@ -10,6 +10,7 @@ Parameters:
   ClusterName:
     Description: Name of the cluster
     Type: String
+    Default: dummy-cluster-name
 Mappings:
   # Hard values for the subnet masks. These masks define
   # the range of internal IP addresses that can be assigned.
