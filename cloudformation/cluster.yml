@@ -10,7 +10,7 @@ Parameters:
   ClusterName:
     Description: Name of the cluster
     Type: String
-    Default: dummy-cluster-name
+#    Default: dummy-cluster-name
 Mappings:
   # Hard values for the subnet masks. These masks define
   # the range of internal IP addresses that can be assigned.
@@ -204,7 +204,7 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: 
+      ClusterName: !Ref ClusterName
 
   # A security group for the containers we will run in Fargate.
   # Three rules, allowing network traffic from a public facing load
