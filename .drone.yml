@@ -10,21 +10,21 @@ steps:
   #   when:
   #     event: [push]
 
-  - name: publish-docker-image
-    image: plugins/docker
-    settings:
-      username: 
-        from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
-      password: 
-        from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
-      repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
-      tags: 
-        - latest
-        - ${DRONE_TAG}
-      #dockerfile: Dockerfile
-    when:
-      branch: [ master ]
-      event: [ tag ] # step only triggers on push events
+  # - name: publish-docker-image
+  #   image: plugins/docker
+  #   settings:
+  #     username: 
+  #       from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
+  #     password: 
+  #       from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
+  #     repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
+  #     tags: 
+  #       - latest
+  #       - ${DRONE_TAG}
+  #     #dockerfile: Dockerfile
+  #   when:
+  #     branch: [ master ]
+  #     event: [ tag ] # step only triggers on push events
 
   - name: validate-cluster-cf
     image: robertstettner/drone-cloudformation
@@ -52,6 +52,7 @@ steps:
       secret_key:
         from_secret: AWS_SECRET_KEY
       params:
+        ClusterName: inpainter-cluster
         Version: 1
         Environment: staging
     when:
@@ -98,20 +99,24 @@ steps:
       secret_key:
         from_secret: AWS_SECRET_KEY
       service: arn:aws:ecs:eu-west-1:486687584209:service/inpainter-srv
-      cluster: inpainter-cluster-stack-ECSCluster-1SDZDMBJFKTHD
+      cluster: inpainter-cluster
       region: eu-west-1
       family: inpainter
       docker_image: docker.io/zavolokas/inpainter
       image_tag: latest
       deployment_configuration: 50 200
       task_network_mode: "awsvpc"
-      container_name: inpainter
+      container_name: inpainter-srv-container
       compatibilities: [ "FARGATE" ]
       task_cpu: 1024 # cpu & memory are related - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
       task_memory: 2048
-      service_network_subnets:
-        - subnet-0569c6877bac5a4d9
-        - subnet-06fa2c9ad587a10ca
+      # service_network_subnets:
+      #   # public subnets
+      #     - subnet-03a1f5409683800d0
+      #     - subnet-0baed3f00c39e5b62	
+      #   # private subnets
+      #   # - subnet-047ac1f8544bc1707
+      #   # - subnet-070ca4b96c973c495
       port_mappings:
         - 80 80
     when:

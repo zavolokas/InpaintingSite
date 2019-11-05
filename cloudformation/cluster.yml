@@ -6,6 +6,10 @@ Description: This stack deploys a Fargate cluster that is in a VPC with both
              send traffic to the containers in the private subnet, and one in
              the private subnet, which can be used for private internal traffic
              between internal services.
+Parameters:
+  ClusterName:
+    Description: Name of the cluster
+    Type: String
 Mappings:
   # Hard values for the subnet masks. These masks define
   # the range of internal IP addresses that can be assigned.
@@ -198,6 +202,8 @@ Resources:
   # ECS Resources
   ECSCluster:
     Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: 
 
   # A security group for the containers we will run in Fargate.
   # Three rules, allowing network traffic from a public facing load
