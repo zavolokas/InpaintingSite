@@ -24,7 +24,7 @@ steps:
       #dockerfile: Dockerfile
     when:
       branch: [ drone-cf ]
-      event: [ tag ] # step only triggers on push events
+      event: [ push ] # step only triggers on push events
 
   # - name: validate-cluster-cf
   #   image: robertstettner/drone-cloudformation
@@ -114,7 +114,7 @@ steps:
         # # public subnets
         #   - subnet-0533aa209b81c1090
         #   - subnet-0854ca47efd0404be	
-        private subnets
+        # private subnets
         - subnet-0666d7e23ae7e5646
         - subnet-02c4f0a7bbe07b8df
       port_mappings:
