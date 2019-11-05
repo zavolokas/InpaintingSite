@@ -23,7 +23,7 @@ steps:
         - ${DRONE_TAG}
       #dockerfile: Dockerfile
     when:
-      branch: [ master ]
+      branch: [ drone-cf ]
       event: [ tag ] # step only triggers on push events
 
   # - name: validate-cluster-cf
