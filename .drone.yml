@@ -26,70 +26,70 @@ steps:
   #     branch: [ master ]
   #     event: [ tag ] # step only triggers on push events
 
-  - name: validate-cluster-cf
-    image: robertstettner/drone-cloudformation
-    settings:
-      mode: validate
-      stackname: inpainter-cluster
-      template: cloudformation/cluster.yml
-      access_key: 
-        from_secret: AWS_ACCESS_KEY
-      secret_key:
-        from_secret: AWS_SECRET_KEY
-    when:
-      branch: [drone-cf]
-      event: [push]
+  # - name: validate-cluster-cf
+  #   image: robertstettner/drone-cloudformation
+  #   settings:
+  #     mode: validate
+  #     stackname: inpainter-cluster
+  #     template: cloudformation/cluster.yml
+  #     access_key: 
+  #       from_secret: AWS_ACCESS_KEY
+  #     secret_key:
+  #       from_secret: AWS_SECRET_KEY
+  #   when:
+  #     branch: [drone-cf]
+  #     event: [push]
 
-  - name: create-update-cluster-cf-stack
-    image: robertstettner/drone-cloudformation
-    settings:
-      pull: true
-      stackname: inpainter-cluster-stack
-      template: cloudformation/cluster.yml
-      region: eu-west-1
-      access_key: 
-        from_secret: AWS_ACCESS_KEY
-      secret_key:
-        from_secret: AWS_SECRET_KEY
-      params:
-        ClusterName: inpainter-cluster
-        Version: 1
-        Environment: staging
-    when:
-      branch: [drone-cf]
-      event: [push]
+  # - name: create-update-cluster-cf-stack
+  #   image: robertstettner/drone-cloudformation
+  #   settings:
+  #     pull: true
+  #     stackname: inpainter-cluster-stack
+  #     template: cloudformation/cluster.yml
+  #     region: eu-west-1
+  #     access_key: 
+  #       from_secret: AWS_ACCESS_KEY
+  #     secret_key:
+  #       from_secret: AWS_SECRET_KEY
+  #     params:
+  #       ClusterName: inpainter-cluster
+  #       Version: 1
+  #       Environment: staging
+  #   when:
+  #     branch: [drone-cf]
+  #     event: [push]
 
-  - name: validate-service-cf
-    image: robertstettner/drone-cloudformation
-    settings:
-      mode: validate
-      stackname: inpainter-service
-      template: cloudformation/service.yml
-      access_key: 
-        from_secret: AWS_ACCESS_KEY
-      secret_key:
-        from_secret: AWS_SECRET_KEY
-    when:
-      branch: [drone-cf]
-      event: [push]
+  # - name: validate-service-cf
+  #   image: robertstettner/drone-cloudformation
+  #   settings:
+  #     mode: validate
+  #     stackname: inpainter-service
+  #     template: cloudformation/service.yml
+  #     access_key: 
+  #       from_secret: AWS_ACCESS_KEY
+  #     secret_key:
+  #       from_secret: AWS_SECRET_KEY
+  #   when:
+  #     branch: [drone-cf]
+  #     event: [push]
 
-  - name: create-update-service-cf-stack
-    image: robertstettner/drone-cloudformation
-    settings:
-      pull: true
-      stackname: inpainter-service-stack
-      template: cloudformation/service.yml
-      region: eu-west-1
-      access_key: 
-        from_secret: AWS_ACCESS_KEY
-      secret_key:
-        from_secret: AWS_SECRET_KEY
-      params:
-        Version: 1
-        Environment: staging
-    when:
-      branch: [drone-cf]
-      event: [push]
+  # - name: create-update-service-cf-stack
+  #   image: robertstettner/drone-cloudformation
+  #   settings:
+  #     pull: true
+  #     stackname: inpainter-service-stack
+  #     template: cloudformation/service.yml
+  #     region: eu-west-1
+  #     access_key: 
+  #       from_secret: AWS_ACCESS_KEY
+  #     secret_key:
+  #       from_secret: AWS_SECRET_KEY
+  #     params:
+  #       Version: 1
+  #       Environment: staging
+  #   when:
+  #     branch: [drone-cf]
+  #     event: [push]
 
   - name: deploy-to-ecs
     image: peloton/drone-ecs
@@ -110,13 +110,13 @@ steps:
       compatibilities: [ "FARGATE" ]
       task_cpu: 1024 # cpu & memory are related - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
       task_memory: 2048
-      # service_network_subnets:
-      #   # public subnets
-      #     - subnet-03a1f5409683800d0
-      #     - subnet-0baed3f00c39e5b62	
-      #   # private subnets
-      #   # - subnet-047ac1f8544bc1707
-      #   # - subnet-070ca4b96c973c495
+      service_network_subnets:
+        # public subnets
+          - subnet-0533aa209b81c1090
+          - subnet-0854ca47efd0404be	
+        # private subnets
+        # - subnet-047ac1f8544bc1707
+        # - subnet-070ca4b96c973c495
       port_mappings:
         - 80 80
     when:
