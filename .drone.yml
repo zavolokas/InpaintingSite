@@ -10,53 +10,53 @@ steps:
   #   when:
   #     event: [push]
 
-  # - name: publish-docker-image
-  #   image: plugins/docker
-  #   settings:
-  #     username: 
-  #       from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
-  #     password: 
-  #       from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
-  #     repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
-  #     tags: 
-  #       - latest
-  #       - ${DRONE_TAG}
-  #     #dockerfile: Dockerfile
-  #   when:
-  #     branch: [ master ]
-  #     event: [ tag ] # step only triggers on push events
+  - name: publish-docker-image
+    image: plugins/docker
+    settings:
+      username: 
+        from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
+      password: 
+        from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
+      repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
+      tags: 
+        - latest
+        - ${DRONE_TAG}
+      #dockerfile: Dockerfile
+    when:
+      branch: [ master ]
+      event: [ tag ] # step only triggers on push events
 
-  # - name: validate-cluster-cf
-  #   image: robertstettner/drone-cloudformation
-  #   settings:
-  #     mode: validate
-  #     stackname: inpainter-cluster
-  #     template: cloudformation/cluster.yml
-  #     access_key: 
-  #       from_secret: AWS_ACCESS_KEY
-  #     secret_key:
-  #       from_secret: AWS_SECRET_KEY
-  #   when:
-  #     branch: [drone-cf]
-  #     event: [push]
+  - name: validate-cluster-cf
+    image: robertstettner/drone-cloudformation
+    settings:
+      mode: validate
+      stackname: inpainter-cluster
+      template: cloudformation/cluster.yml
+      access_key: 
+        from_secret: AWS_ACCESS_KEY
+      secret_key:
+        from_secret: AWS_SECRET_KEY
+    when:
+      branch: [drone-cf]
+      event: [push]
 
-  # - name: create-update-cluster-cf-stack
-  #   image: robertstettner/drone-cloudformation
-  #   settings:
-  #     pull: true
-  #     stackname: inpainter-cluster-stack
-  #     template: cloudformation/cluster.yml
-  #     region: eu-west-1
-  #     access_key: 
-  #       from_secret: AWS_ACCESS_KEY
-  #     secret_key:
-  #       from_secret: AWS_SECRET_KEY
-  #     params:
-  #       Version: 1
-  #       Environment: staging
-  #   when:
-  #     branch: [drone-cf]
-  #     event: [push]
+  - name: create-update-cluster-cf-stack
+    image: robertstettner/drone-cloudformation
+    settings:
+      pull: true
+      stackname: inpainter-cluster-stack
+      template: cloudformation/cluster.yml
+      region: eu-west-1
+      access_key: 
+        from_secret: AWS_ACCESS_KEY
+      secret_key:
+        from_secret: AWS_SECRET_KEY
+      params:
+        Version: 1
+        Environment: staging
+    when:
+      branch: [drone-cf]
+      event: [push]
 
   - name: validate-service-cf
     image: robertstettner/drone-cloudformation
