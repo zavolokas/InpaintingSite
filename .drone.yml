@@ -111,12 +111,12 @@ steps:
       task_cpu: 1024 # cpu & memory are related - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
       task_memory: 2048
       service_network_subnets:
-        # public subnets
-          - subnet-0533aa209b81c1090
-          - subnet-0854ca47efd0404be	
-        # private subnets
-        # - subnet-047ac1f8544bc1707
-        # - subnet-070ca4b96c973c495
+        # # public subnets
+        #   - subnet-0533aa209b81c1090
+        #   - subnet-0854ca47efd0404be	
+        private subnets
+        - subnet-0666d7e23ae7e5646
+        - subnet-02c4f0a7bbe07b8df
       port_mappings:
         - 80 80
     when:
