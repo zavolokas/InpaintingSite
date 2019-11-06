@@ -8,7 +8,7 @@ steps:
     commands:
       - dotnet build -c Release
     when:
-      event: [push]
+      event: [push, tag]
 
   - name: validate-cluster-cf
     image: robertstettner/drone-cloudformation
@@ -69,7 +69,7 @@ steps:
         Environment: staging
     when:
       branch: [master]
-      event: [push]
+      event: [push, tag]
 
   - name: create-update-service-cf-stack
     image: robertstettner/drone-cloudformation
@@ -87,7 +87,7 @@ steps:
         Environment: staging
     when:
       branch: [master]
-      event: [push]
+      event: [push, tag]
 
   - name: publish-container-to-ecs
     image: adorsys/awscli
