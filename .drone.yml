@@ -10,19 +10,35 @@ steps:
   #   when:
   #     event: [push]
 
-  - name: publish-docker-image
-    image: plugins/docker
-    settings:
-      username:
-        from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
-      password:
-        from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
-      repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
-      tags: 
-        - latest
-        #- ${DRONE_TAG}
-        - 2.0.2
-      dockerfile: Dockerfile
+  # - name: publish-docker-image
+  #   image: plugins/docker
+  #   settings:
+  #     username:
+  #       from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
+  #     password:
+  #       from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
+  #     repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
+  #     tags: 
+  #       - latest
+  #       #- ${DRONE_TAG}
+  #       - 2.0.4
+  #     dockerfile: Dockerfile
+  #   when:
+  #     branch: [ drone-cf ]
+  #     event: [ push ] # step only triggers on push events
+
+  - name: publish-container-to-ecs
+    image: adorsys/awscli
+    # image: quay.io/honestbee/awscli:1.11.55
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: AWS_ACCESS_KEY
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: AWS_SECRET_KEY
+      AWS_DEFAULT_REGION: eu-west-1
+      AWS_DEFAULT_OUTPUT: json
+    commands:
+      - aws ecs update-service --cluster inpainter-cluster --service inpainter-srv --force-new-deployment
     when:
       branch: [ drone-cf ]
       event: [ push ] # step only triggers on push events
@@ -91,87 +107,3 @@ steps:
   #   when:
   #     branch: [drone-cf]
   #     event: [push]
-
-  # - name: deploy-to-ecs
-  #   image: peloton/drone-ecs
-  #   settings:
-  #     access_key:
-  #       from_secret: AWS_ACCESS_KEY
-  #     secret_key:
-  #       from_secret: AWS_SECRET_KEY
-  #     service: arn:aws:ecs:eu-west-1:486687584209:service/inpainter-srv
-  #     cluster: inpainter-cluster
-  #     region: eu-west-1
-  #     family: inpainter
-  #     docker_image: docker.io/zavolokas/inpainter
-  #     image_tag: latest
-  #     deployment_configuration: 50 200
-  #     task_network_mode: "awsvpc"
-  #     container_name: inpainter-srv-container
-  #     compatibilities: [ "FARGATE" ]
-  #     task_cpu: 1024 # cpu & memory are related - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
-  #     task_memory: 2048
-  #     service_network_subnets:
-  #       # # public subnets
-  #       #   - subnet-0533aa209b81c1090
-  #       #   - subnet-0854ca47efd0404be	
-  #       # private subnets
-  #       - subnet-0666d7e23ae7e5646
-  #       - subnet-02c4f0a7bbe07b8df
-  #     port_mappings:
-  #       - 80 80
-  #   when:
-  #     branch: [drone-cf]
-  #     event: [push]
-
-
-  # deploy:
-  #   image: joshdvir/drone-ecs-deploy
-  #   cluster: 
-  #     from_secret: CLUSTER_NAME
-  #   service: 
-  #     from_secret: SERVICE_NAME
-  #   image_name: docker.io/zavolokas/inpainter:latest
-  #   aws_region: eu-west-1 # defaults to eu-west-1
-  #   # timeout: "600" # defaults to 300 / 5 min
-  #   # max: "200" # defaults to 200
-  #   # min: "100" # defaults to 100
-  #   aws_access_key_id:
-  #     from_secret: AWS_ACCESS_KEY_ID
-  #   aws_secret_access_key:
-  #     from_secret: AWS_SECRET_ACCESS_KEY
-  #   when:
-  #     branch: [deploy-to-ecs]
-  #     event: [push]
-  
-  # ecs:
-  #   image: peloton/drone-ecs
-  #   access_key:
-  #     from_secret: AWS_ACCESS_KEY_ID
-  #   secret_key:
-  #     from_secret: AWS_SECRET_ACCESS_KEY
-  #   service:
-  #     from_secret: SERVICE_NAME
-  #   cluster:
-  #     from_secret: CLUSTER_NAME  
-  #   region: eu-west-1
-  #   family: inpainter
-  #   docker_image: docker.io/zavolokas/inpainter
-  #   image_tag: latest
-  #   # environment_variables:
-  #   #   - DATABASE_URI=database uri
-  #   deployment_configuration: 50 200
-  #   task_network_mode: "awsvpc"
-  #   compatibilities: [ "FARGATE" ]
-  #   task_cpu: 1024 # cpu & memory are related - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
-  #   task_memory: 2048
-  #   port_mappings:
-  #     - 8069 8069
-  #   memory: 512
-  #   service_network_subnets: 
-  #     - subnet-0bb01e08153c4393c
-  #     - subnet-05eee5854fd39361d
-  #   # service_network_security_groups:
-  #   #   - sg-051621bfc71107403
-
-  
