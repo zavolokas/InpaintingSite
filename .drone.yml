@@ -10,22 +10,22 @@ steps:
   #   when:
   #     event: [push]
 
-  # - name: publish-docker-image
-  #   image: plugins/docker
-  #   settings:
-  #     username:
-  #       from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
-  #     password:
-  #       from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
-  #     repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
-  #     tags: 
-  #       - latest
-  #       #- ${DRONE_TAG}
-  #       - 2.0.2
-  #     dockerfile: Dockerfile
-  #   when:
-  #     branch: [ drone-cf ]
-  #     event: [ push ] # step only triggers on push events
+  - name: publish-docker-image
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
+      password:
+        from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
+      repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
+      tags: 
+        - latest
+        #- ${DRONE_TAG}
+        - 2.0.2
+      dockerfile: Dockerfile
+    when:
+      branch: [ drone-cf ]
+      event: [ push ] # step only triggers on push events
 
   # - name: validate-cluster-cf
   #   image: robertstettner/drone-cloudformation
@@ -60,37 +60,37 @@ steps:
   #     branch: [drone-cf]
   #     event: [push]
 
-  - name: validate-service-cf
-    image: robertstettner/drone-cloudformation
-    settings:
-      mode: validate
-      stackname: inpainter-service
-      template: cloudformation/service.yml
-      access_key: 
-        from_secret: AWS_ACCESS_KEY
-      secret_key:
-        from_secret: AWS_SECRET_KEY
-    when:
-      branch: [drone-cf]
-      event: [push]
+  # - name: validate-service-cf
+  #   image: robertstettner/drone-cloudformation
+  #   settings:
+  #     mode: validate
+  #     stackname: inpainter-service
+  #     template: cloudformation/service.yml
+  #     access_key: 
+  #       from_secret: AWS_ACCESS_KEY
+  #     secret_key:
+  #       from_secret: AWS_SECRET_KEY
+  #   when:
+  #     branch: [drone-cf]
+  #     event: [push]
 
-  - name: create-update-service-cf-stack
-    image: robertstettner/drone-cloudformation
-    settings:
-      pull: true
-      stackname: inpainter-service-stack
-      template: cloudformation/service.yml
-      region: eu-west-1
-      access_key: 
-        from_secret: AWS_ACCESS_KEY
-      secret_key:
-        from_secret: AWS_SECRET_KEY
-      params:
-        Version: 1
-        Environment: staging
-    when:
-      branch: [drone-cf]
-      event: [push]
+  # - name: create-update-service-cf-stack
+  #   image: robertstettner/drone-cloudformation
+  #   settings:
+  #     pull: true
+  #     stackname: inpainter-service-stack
+  #     template: cloudformation/service.yml
+  #     region: eu-west-1
+  #     access_key: 
+  #       from_secret: AWS_ACCESS_KEY
+  #     secret_key:
+  #       from_secret: AWS_SECRET_KEY
+  #     params:
+  #       Version: 1
+  #       Environment: staging
+  #   when:
+  #     branch: [drone-cf]
+  #     event: [push]
 
   # - name: deploy-to-ecs
   #   image: peloton/drone-ecs
