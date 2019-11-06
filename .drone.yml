@@ -8,20 +8,98 @@ steps:
     commands:
       - dotnet build -c Release
     when:
+      event: [push, tag]
+
+  - name: validate-cluster-cf
+    image: robertstettner/drone-cloudformation
+    settings:
+      mode: validate
+      stackname: inpainter-cluster
+      template: cloudformation/cluster.yml
+      access_key: 
+        from_secret: AWS_ACCESS_KEY
+      secret_key:
+        from_secret: AWS_SECRET_KEY
+    when:
+      event: [push]
+
+  - name: validate-service-cf
+    image: robertstettner/drone-cloudformation
+    settings:
+      mode: validate
+      stackname: inpainter-service
+      template: cloudformation/service.yml
+      access_key: 
+        from_secret: AWS_ACCESS_KEY
+      secret_key:
+        from_secret: AWS_SECRET_KEY
+    when:
       event: [push]
 
   - name: publish-docker-image
     image: plugins/docker
     settings:
-      username: 
+      username:
         from_secret: DOCKER_USERNAME  # we will inject your dockerhub username using drone secrets. 
-      password: 
+      password:
         from_secret: DOCKER_PASSWORD # we will inject your dockerhub password using drone secrets.
       repo: zavolokas/inpainter # refer to dockerhub documentation for repo naming conventions
       tags: 
         - latest
         - ${DRONE_TAG}
-      #dockerfile: Dockerfile
+      dockerfile: Dockerfile
     when:
       branch: [ master ]
-      event: [ tag ] # step only triggers on push events
+      event: [ tag ]
+
+  - name: create-update-cluster-cf-stack
+    image: robertstettner/drone-cloudformation
+    settings:
+      pull: true
+      stackname: inpainter-cluster-stack
+      template: cloudformation/cluster.yml
+      region: eu-west-1
+      access_key: 
+        from_secret: AWS_ACCESS_KEY
+      secret_key:
+        from_secret: AWS_SECRET_KEY
+      params:
+        ClusterName: inpainter-cluster
+        Version: 1
+        Environment: staging
+    when:
+      branch: [master]
+      event: [push, tag]
+
+  - name: create-update-service-cf-stack
+    image: robertstettner/drone-cloudformation
+    settings:
+      pull: true
+      stackname: inpainter-service-stack
+      template: cloudformation/service.yml
+      region: eu-west-1
+      access_key: 
+        from_secret: AWS_ACCESS_KEY
+      secret_key:
+        from_secret: AWS_SECRET_KEY
+      params:
+        Version: 1
+        Environment: staging
+    when:
+      branch: [master]
+      event: [push, tag]
+
+  - name: publish-container-to-ecs
+    image: adorsys/awscli
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: AWS_ACCESS_KEY
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: AWS_SECRET_KEY
+      AWS_DEFAULT_REGION: eu-west-1
+      AWS_DEFAULT_OUTPUT: json
+    commands:
+      - aws ecs update-service --cluster inpainter-cluster --service inpainter-srv --force-new-deployment
+    when:
+      branch: [ master ]
+      event: [ tag ]
