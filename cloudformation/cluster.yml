@@ -275,6 +275,17 @@ Resources:
         - !Ref PublicSubnetOne
         - !Ref PublicSubnetTwo
       SecurityGroups: [!Ref 'PublicLoadBalancerSG']
+  InpaintDNS:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: inpaint.me.
+      Comment: Zone apex alias targeted to PublicLoadBalancer.
+      RecordSets:
+      - Name: example.inpaint.me.
+        Type: A
+        AliasTarget:
+          HostedZoneId: !GetAtt PublicLoadBalancer.CanonicalHostedZoneID
+          DNSName: !GetAtt PublicLoadBalancer.DNSName
   # A dummy target group is used to setup the ALB to just drop traffic
   # initially, before any real service target groups have been added.
   DummyTargetGroupPublic:
