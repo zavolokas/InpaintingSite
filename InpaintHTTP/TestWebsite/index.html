@@ -107,7 +107,8 @@
 			
 			<div id="footer"><a href="https://github.com/zavolokas/InpaintingSite">GitHub v2.0.4</a></div>
 			
-			<input type="button" id="inpaint" value="inpaint" />
+			<input type="button" id="inpaint" value="Inpaint" />
+			<a id="download" class="btn-hide" download>Download</a>
 		</form>
 	</div>
 	<script>
@@ -130,7 +131,6 @@ function UpdateImg(input, isMask) {
 				{
 					$('#preview')
 						.css("background-image", "url('" + e.target.result + "')");
-					
 					//initialize Canvas
 					/*
 					var canvasWidth = 720; //obtain image details to set correct dimensions??
@@ -176,7 +176,7 @@ $(function(){
 		
 		console.log("Started Request");
 		$('#preview').addClass("img-busy");
-		$("#inpaint").addClass("btn-hide");
+		$("#inpaint,#download").addClass("btn-hide");
 		
         $.ajax({
             url: '/api/inpaint', //NOTE: you will get a JS header error when the url is NOT from the same hoste!
@@ -186,12 +186,14 @@ $(function(){
             processData: false,
             success: function(data){
 				console.log("Done");
-				$("#inpaint").removeClass("btn-hide");
+				$("#inpaint,#download").removeClass("btn-hide");
 				$("#mask")
 					.addClass("mask-finished");
 				$('#preview')
 					.css("background-image", "url('data:image/png;base64," + data + "')")
 					.removeClass("img-busy");
+				$('#download')
+				  .attr("href", "data:image/png;base64," + data);
 			},
 			error: function(data){
 					console.log("Unknown Error on Processing Image");
