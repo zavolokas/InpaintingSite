@@ -69,7 +69,7 @@ namespace InpaintHTTP
                         .FromLabToRgb()
                         .FromRgbToBitmap();
                     finalResult = iterationResult;
-                    Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] call on inpainter.IterationFinished"); //Debugging
+                    Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] call on inpainter.IterationFinished (Level " + eventArgs.LevelIndex + ", Iteration " + eventArgs.InpaintIteration + ")"); //Debugging
                 };
 
                 await Task.Factory.StartNew(() => inpainter.Inpaint(imageArgb, markupArgb, settings));
