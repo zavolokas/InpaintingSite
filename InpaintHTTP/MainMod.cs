@@ -10,6 +10,7 @@ using Zavolokas.ImageProcessing.PatchMatch;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Collections.Generic;
 
 //TODO: Cleanup the mess above & unused References
 
@@ -29,19 +30,28 @@ namespace InpaintHTTP
                     return "Err";
                 }
                   
-                Bitmap BitmapImg;
-                var imageFile = this.Request.Files.First();
-                byte[] ByteImg = new byte[imageFile.Value.Length];
-                imageFile.Value.Read(ByteImg, 0, (int)imageFile.Value.Length);
-                using (MemoryStream ms = new MemoryStream(ByteImg))
-                    BitmapImg = new Bitmap(ms);
+                Bitmap BitmapImg = null, BitmapMask = null;
+                var donors = new List<ZsImage>();
+                foreach (var file in this.Request.Files)
+                {
+                    Bitmap tempBitmap;
+                    byte[] ByteImg = new byte[file.Value.Length];
+                    file.Value.Read(ByteImg, 0, (int)file.Value.Length);
+                    using (MemoryStream ms = new MemoryStream(ByteImg))
+                        tempBitmap = new Bitmap(ms);
 
-                Bitmap BitmapMask;
-                var maskFile = this.Request.Files.Last();
-                byte[] ByteMask = new byte[maskFile.Value.Length];
-                maskFile.Value.Read(ByteMask, 0, (int)maskFile.Value.Length);
-                using (MemoryStream ms = new MemoryStream(ByteMask))
-                    BitmapMask = new Bitmap(ms);
+                    if (BitmapImg == null)
+                    {
+                        BitmapImg = tempBitmap;
+                    }
+                    else if (BitmapMask == null)
+                    {
+                        BitmapMask = tempBitmap;
+                    }
+                    else {
+                        donors.Add(tempBitmap.ToArgbImage());
+                    }
+                }
 
                 var imageArgb = ConvertToArgbImage(BitmapImg);
                 var markupArgb = ConvertToArgbImage(BitmapMask);
@@ -72,7 +82,7 @@ namespace InpaintHTTP
                     Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] call on inpainter.IterationFinished (Level " + eventArgs.LevelIndex + ", Iteration " + eventArgs.InpaintIteration + ")"); //Debugging
                 };
 
-                await Task.Factory.StartNew(() => inpainter.Inpaint(imageArgb, markupArgb, settings));
+                await Task.Factory.StartNew(() => inpainter.Inpaint(imageArgb, markupArgb, settings, donors));
 
                 Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] Processing finished");
 #if DEBUG
