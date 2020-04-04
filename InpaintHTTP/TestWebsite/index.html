@@ -96,10 +96,9 @@
 		<h1>Inpainting Example</h1>
 		<form enctype="multipart/form-data" method="POST">
 			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
-			<tt>Image: <input name="Image" id="Image" type="file" onchange="UpdateImg(this, false);"/><br>
-			Mask:&nbsp; </tt><input name="Mask" id="Mask" type="file" onchange="UpdateImg(this, true);"/></tt>
-			
-			<br><br>
+			<p>Image:&nbsp;<input name="Image" id="Image" type="file" onchange="UpdateImg(this, false);"/></p>
+			<p>Mask:&nbsp;<input name="Mask" id="Mask" type="file" onchange="UpdateImg(this, true);"/></p>
+			<p>Donors:&nbsp;<input name="Donors" id="Donors" type="file" multiple/></p>
 			
 			<div id="preview">
 				<img id="mask" class="mask-finished">
@@ -173,13 +172,16 @@ $(function(){
 
         fd.append('file',imagefile);
         fd.append('file',maskfile);
+        for(donorFile of $('#Donors')[0].files) {
+          fd.append('file',donorFile);
+        }
 		
 		console.log("Started Request");
 		$('#preview').addClass("img-busy");
 		$("#inpaint,#download").addClass("btn-hide");
 		
         $.ajax({
-            url: '/api/inpaint', //NOTE: you will get a JS header error when the url is NOT from the same hoste!
+            url: '/api/inpaint', //NOTE: you will get a JS header error when the url is NOT from the same host!
             type: 'post',
             data: fd,
             contentType: false,
