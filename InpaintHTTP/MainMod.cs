@@ -60,7 +60,8 @@ namespace InpaintHTTP
                 var settings = new InpaintSettings
                 {
                     MaxInpaintIterations = 15,
-                    PatchDistanceCalculator = ImagePatchDistance.Cie76
+                    PatchDistanceCalculator = ImagePatchDistance.Cie76,
+                    PatchSize = 11
                 };
                 if (!Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out settings.MaxInpaintIterations))
                 {
@@ -69,6 +70,11 @@ namespace InpaintHTTP
                 string patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
                 if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase)) {
                   settings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
+                }
+                int patchSize;
+                if (Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize))
+                {
+                    settings.PatchSize = (byte)patchSize;
                 }
 
                 Image finalResult = null;
