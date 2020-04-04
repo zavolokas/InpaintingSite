@@ -48,10 +48,17 @@ namespace InpaintHTTP
                 var inpainter = new Inpainter();
                 var settings = new InpaintSettings
                 {
-                    //MaxInpaintIterations = 15,
-                    MaxInpaintIterations = 5, //less iterations for debugging
+                    MaxInpaintIterations = 15,
                     PatchDistanceCalculator = ImagePatchDistance.Cie76
                 };
+                if (!Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out settings.MaxInpaintIterations))
+                {
+                    settings.MaxInpaintIterations = 15;
+                }
+                string patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
+                if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase)) {
+                  settings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
+                }
 
                 Image finalResult = null;
 
@@ -93,17 +100,31 @@ namespace InpaintHTTP
 
         private static ZsImage ConvertToArgbImage(Bitmap imageBitmap)
         {
-            const double maxSize = 2048.0;
-
-            if (imageBitmap.Width > maxSize || imageBitmap.Height > maxSize)
+            double maxSize = 2048;
+            try {
+                maxSize = Int32.Parse(Environment.GetEnvironmentVariable("MAX_IMAGE_DIMENSION"));
+            }
+            catch (ArgumentNullException) {}
+            catch (FormatException)
             {
-                var tmp = imageBitmap;
-                double percent = imageBitmap.Width > imageBitmap.Height
-                    ? maxSize / imageBitmap.Width
-                    : maxSize / imageBitmap.Height;
-                imageBitmap =
-                    imageBitmap.CloneWithScaleTo((int)(imageBitmap.Width * percent), (int)(imageBitmap.Height * percent));
-                tmp.Dispose();
+                Console.WriteLine("Invalid value for the MAX_IMAGE_DIMENSION. It must be an integer.");
+            }
+            catch (OverflowException)
+            {
+                Console.WriteLine("Invalid value for the MAX_IMAGE_DIMENSION. Out of 32-bit integer range.");
+            }
+
+            if (maxSize > 0) {
+                if (imageBitmap.Width > maxSize || imageBitmap.Height > maxSize)
+                {
+                    var tmp = imageBitmap;
+                    double percent = imageBitmap.Width > imageBitmap.Height
+                        ? maxSize / imageBitmap.Width
+                        : maxSize / imageBitmap.Height;
+                    imageBitmap =
+                        imageBitmap.CloneWithScaleTo((int)(imageBitmap.Width * percent), (int)(imageBitmap.Height * percent));
+                    tmp.Dispose();
+                }
             }
 
             var imageArgb = imageBitmap.ToArgbImage();
