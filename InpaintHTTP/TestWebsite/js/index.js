@@ -84,15 +84,17 @@ $(function(){
         updateGalery();
     });
 
-    //Mouse events
-    $('#preview').mousedown(function(e){
+    // Desktop Mouse Movement Events 
+    $('#preview').mousedown(function (e) {
+        console.log("mousedown " + maskHandler.paints());
         let c = maskHandler.getCanvas();
         if(c != null)
         {
             let f = c.width / $(this).width();
-            //maskHandler.OnMouseDown(e, this.offsetLeft, this.offsetTop, f); //WARNING: this conflicts with mobile, gets called there
+            maskHandler.OnMouseDown(e, this.offsetLeft, this.offsetTop, f); //WARNING: this conflicts with mobile, gets called there
         }
-    }).mousemove(function(e){
+    }).mousemove(function (e) {
+        console.log("mousemove " + maskHandler.paints());
         let c = maskHandler.getCanvas();
         if(c != null)
         {
@@ -100,24 +102,28 @@ $(function(){
             maskHandler.OnMouseMove(e, this.offsetLeft, this.offsetTop, f);
         }
     }).mouseleave(function (e) {
+        console.log("mouseleave " + maskHandler.paints());
         maskHandler.OnMouseLeave(e);
-    }).mouseup(function(e){
+    }).mouseup(function (e) {
+        console.log("mouseleave " + maskHandler.paints());
         maskHandler.OnMouseUp(e);
-    }).on({ 'touchstart' :function(e) {
+    }
+    // Mobile Mouse Movement Events
+    ).on({'touchstart': function (e) {
         console.log("start " + maskHandler.paints());
         let c = maskHandler.getCanvas();
         if (c != null) {
             let f = c.width / $(this).width();
             maskHandler.OnMouseDown(e, this.offsetLeft, this.offsetTop, f);
         }
-    }}).on({ 'touchmove' :function(e) {
+    }}).on({'touchmove' :function(e) {
         console.log("move " + maskHandler.paints());
         let c = maskHandler.getCanvas();
         if (c != null) {
             let f = c.width / $(this).width();
             maskHandler.OnMouseMove(e, this.offsetLeft, this.offsetTop, f);
         }
-    }}).on({ 'touchend' :function (e) {
+    }}).on({'touchend' :function (e) {
         maskHandler.OnMouseUp(e);
         console.log("up " + maskHandler.paints());
     }});

@@ -206,10 +206,10 @@ let maskHandler = function () {
     let _OnMouseDown = function(e, offsetLeft, offsetTop, f){
         lineID++;
         paint = true;
-        if(e.pageX)
+        if(e.pageX) // desktop detected
         {
-            lastClickX = (e.pageX - offsetLeft) * f;
-            lastClickY = (e.pageY - offsetLeft) * f;
+            lastClickX = (e.pageX) * f;
+            lastClickY = (e.pageY) * f;
             if(!_isDotActive())
             {
                 _addClick(lastClickX, lastClickY);
@@ -222,7 +222,7 @@ let maskHandler = function () {
                 }
             }
             _reDraw();
-        }else if(e.originalEvent.changedTouches)
+        }else if(e.originalEvent.changedTouches) // mobile detected
         {
             lastClickX = (e.originalEvent.changedTouches[0].pageX - offsetLeft) * f;
             lastClickY = (e.originalEvent.changedTouches[0].pageY - offsetLeft) * f;
