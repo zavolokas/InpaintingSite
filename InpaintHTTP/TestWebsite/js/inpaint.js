@@ -23,8 +23,8 @@ var Inpaint = function () {
         LastResponse = result;
         let img = new Image();
         img.src = "data:image/png;base64," + LastResponse;
-        ImageHandler.SetLastBase64img(img);
-        ImageHandler.saveLastResponseImage();
+        imageHandler.SetLastBase64img(img);
+        imageHandler.saveLastResponseImage();
         callback();
     };
 
