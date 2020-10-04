@@ -208,8 +208,8 @@ let maskHandler = function () {
         paint = true;
         if(e.pageX) // desktop detected
         {
-            lastClickX = (e.pageX) * f;
-            lastClickY = (e.pageY) * f;
+            lastClickX = (e.pageX - offsetLeft) * f;
+            lastClickY = (e.pageY - offsetTop) * f;
             if(!_isDotActive())
             {
                 _addClick(lastClickX, lastClickY);
@@ -225,7 +225,7 @@ let maskHandler = function () {
         }else if(e.originalEvent.changedTouches) // mobile detected
         {
             lastClickX = (e.originalEvent.changedTouches[0].pageX - offsetLeft) * f;
-            lastClickY = (e.originalEvent.changedTouches[0].pageY - offsetLeft) * f;
+            lastClickY = (e.originalEvent.changedTouches[0].pageY - offsetTop) * f;
             if(!_isDotActive())
             {
                 _addClick(lastClickX, lastClickY);
@@ -251,14 +251,14 @@ let maskHandler = function () {
                 {
                     //Do math :D
                     let newDotX = dotX + (((e.pageX - offsetLeft) * f) - lastClickX);
-                    let newDotY = dotY + (((e.pageY - offsetLeft) * f) - lastClickY);
+                    let newDotY = dotY + (((e.pageY - offsetTop) * f) - lastClickY);
 
                     _addClick(newDotX, newDotY, true);
                     dotX = newDotX;
                     dotY = newDotY;
                     //_addClick((e.originalEvent.changedTouches[0].pageX - offsetLeft) * f, (e.originalEvent.changedTouches[0].pageY - offsetTop) * f, true);
                     lastClickX = (e.pageX - offsetLeft) * f;
-                    lastClickY = (e.pageY - offsetLeft) * f;
+                    lastClickY = (e.pageY - offsetTop) * f;
                     _reDraw();
                 }
                 _reDraw();
@@ -268,14 +268,14 @@ let maskHandler = function () {
                 {
                     //Do Math :D
                     let newDotX = dotX + (((e.originalEvent.changedTouches[0].pageX - offsetLeft) * f) - lastClickX);
-                    let newDotY = dotY + (((e.originalEvent.changedTouches[0].pageY - offsetLeft) * f) - lastClickY);
+                    let newDotY = dotY + (((e.originalEvent.changedTouches[0].pageY - offsetTop) * f) - lastClickY);
 
                     _addClick(newDotX, newDotY, true);
                     dotX = newDotX;
                     dotY = newDotY;
                     //_addClick((e.originalEvent.changedTouches[0].pageX - offsetLeft) * f, (e.originalEvent.changedTouches[0].pageY - offsetTop) * f, true);
                     lastClickX = (e.originalEvent.changedTouches[0].pageX - offsetLeft) * f;
-                    lastClickY = (e.originalEvent.changedTouches[0].pageY - offsetLeft) * f;
+                    lastClickY = (e.originalEvent.changedTouches[0].pageY - offsetTop) * f;
                     _reDraw();
                 }
             }

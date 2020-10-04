@@ -8,46 +8,46 @@
 		<link rel="stylesheet" type="text/css" href="css/style.css" media="all" /
 	</head>
 	<body>
-		<div id="content">
-			<div id="ad-intersitial"></div>
-			<div class="polaroid-frame">
-				<form enctype="multipart/form-data" method="POST">
-					<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
-					<div class="preview" id="preview">
-						<div class="preview-note" id="preview-note">
-							<h1>Mobile inpainting</h1>
-							Tap Here<br><span style="font-size: 30px">To Select a Picture</span>
+		<div class="content">
+			<div id="content">
+				<div class="polaroid-frame">
+					<form enctype="multipart/form-data" method="POST">
+						<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
+						<div class="preview" id="preview">
+							<div class="preview-note" id="preview-note">
+								<h1>Mobile inpainting</h1>
+								Tap Here<br><span style="font-size: 30px">To Select a Picture</span>
+							</div>
+							<input name="Image" id="Image" type="file" />
+							<img id="mask" class="mask-finished">
 						</div>
-						<input name="Image" id="Image" type="file" />
-						<img id="mask" class="mask-finished">
-					</div>
-					<!-- <div id="polaroid-footer"> -->
-					<div id="polaroid-footer">
-						<div class="polaroid-slider">
-							<input class="slider-orange masksize-slider" type="range" min="10" max="70" value="20" id="masksize-slider">
+						<!-- <div id="polaroid-footer"> -->
+						<div id="polaroid-footer">
+							<div class="polaroid-slider">
+								<input class="slider-orange masksize-slider" type="range" min="10" max="70" value="20" id="masksize-slider">
+							</div>
+							<div class="polaroid-buttons">
+								<input type="button" class="button-orange" id="inpaint" value="inpaint" />
+								<input type="button" class="button-orange" id="reset" value="reset" />
+								<input type="button" class="button-orange" id="undo" value="undo" />
+								<input type="button" class="button-orange" id="galery" value="galery" />
+							</div>
 						</div>
-						<div class="polaroid-buttons">
-							<input type="button" class="button-orange" id="inpaint" value="inpaint" />
-							<input type="button" class="button-orange" id="reset" value="reset" />
-							<input type="button" class="button-orange" id="undo" value="undo" />
-							<input type="button" class="button-orange" id="galery" value="galery" />
-						</div>
-					</div>
-
-				</form>
+					</form>
+				</div>
 			</div>
-		</div>
-		<div id="img-galery">
-			<div class="polaroid-frame">
-				<div class="polaroid-buttons">
-					<input type="button" class="button-orange" id="galery-close-top" value="back" />
-				</div>
-				<div class="preview">
-					<ul id="galery-list" class="galery-list">
-					</ul>
-				</div>
-				<div class="polaroid-buttons">
-					<input type="button" class="button-orange" id="galery-close-bottom" value="back" />
+			<div id="img-galery">
+				<div class="polaroid-frame">
+					<div class="polaroid-buttons">
+						<input type="button" class="button-orange" id="galery-close-top" value="back" />
+					</div>
+					<div class="preview">
+						<ul id="galery-list" class="galery-list">
+						</ul>
+					</div>
+					<div class="polaroid-buttons">
+						<input type="button" class="button-orange" id="galery-close-bottom" value="back" />
+					</div>
 				</div>
 			</div>
 		</div>
