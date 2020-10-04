@@ -7,12 +7,21 @@ body {
 	/* height: 100%; buggy */
 	margin: auto;
 	background-color: #bdbdbd;
-	padding-bottom: 50px;
 }
 .content {
-	width: 600px;
-	display: block;
+	width: auto;
+	max-height: 70vw;
+	display: flex;
 	margin: auto;
+	padding-top: 3%;
+}
+
+#canvas {
+	display: block;
+	width: auto;
+	height: auto;
+	max-height: 70vh;
+	max-width: 90vw
 }
 .button-orange {
 	/*border: 1px solid #AD3B1F;*/
@@ -62,7 +71,6 @@ body {
 }
 #content {
 	margin: auto;
-
 	border-radius: 10px;
 	padding: 3px;
 }
@@ -107,12 +115,6 @@ h1{
 	display: block;
 	width: 100%;
 }
-#canvas
-{
-	display: block;
-	width: 100%;
-	height: 100%;
-}
 .galery-list
 {
 	padding: 0;
@@ -129,13 +131,14 @@ h1{
 li{
 	list-style: none;
 }
-.polaroid-frame
-{
-	/*border-color: grey;
+.polaroid-frame {
+	/* TODO: Remove below on mobile? */
+	border-color: grey;
 	border-style: solid;
 	border-radius: 6px;
 	border-width: 3px;
-	background-color: #fefefe;*/
+	background-color: #fefefe;
+	/* TODO: Remove above on mobile? */
 	padding: 3px;
 }
 #polaroid-footer
@@ -180,7 +183,7 @@ li{
 {
 	display: block;
 	height: 500px;
-	width: 100%;
+	width: 500px;
 	outline: none;
 	opacity: 0;
 }

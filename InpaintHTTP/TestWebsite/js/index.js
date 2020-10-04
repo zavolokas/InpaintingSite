@@ -14,6 +14,7 @@ $(function(){
                 .css("visibility", "hidden");
             $('#preview')
                 .css("background-image", "url('" + img.src + "')");
+                //.css("width", "auto"); // remobe placeholder
         });
     });
 
@@ -63,6 +64,7 @@ $(function(){
                 .css("visibility", "visible")
                 .val('');
             $('#preview-note').css("visibility", "visible");
+            //$('#preview').css("width", "500px"); // placeholder
         }
     });
 
