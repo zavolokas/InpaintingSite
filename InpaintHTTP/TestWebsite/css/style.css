@@ -7,6 +7,11 @@ body {
 	/* height: 100%; buggy */
 	margin: auto;
 	background-color: #bdbdbd;
+	/* Add cool background and some crayons to fill the empty space? 
+	background-color: #fff;
+	background-image: linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px), linear-gradient(#eee .1em, transparent .1em);
+	background-size: 100% 1.2em;
+	*/
 }
 .content {
 	width: auto;
@@ -110,10 +115,12 @@ h1{
 	padding-top: 42px;
 	width: 100%;
 }
-#mask
-{
+#mask {
 	display: block;
-	width: 100%;
+	width: auto;
+	height: auto;
+	max-height: 70vh;
+	max-width: 90vw;
 }
 .galery-list
 {
