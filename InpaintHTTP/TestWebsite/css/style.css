@@ -1,0 +1,264 @@
+html {
+	width: 100%;
+	height: 100%;
+}
+body {
+	width: 100%;
+	/* height: 100%; buggy */
+	margin: auto;
+	background-color: #bdbdbd;
+	/* Add cool background and some crayons to fill the empty space? 
+	background-color: #fff;
+	background-image: linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px), linear-gradient(#eee .1em, transparent .1em);
+	background-size: 100% 1.2em;
+	*/
+}
+.content {
+	width: auto;
+	max-height: 70vw;
+	display: flex;
+	margin: auto;
+	padding-top: 3%;
+}
+
+#canvas {
+	display: block;
+	width: auto;
+	height: auto;
+	max-height: 70vh;
+	max-width: 90vw
+}
+.button-orange {
+	/*border: 1px solid #AD3B1F;*/
+	border: 1px solid #335657;
+	/*background-color: #df4b26;*/
+	background-color: #5f9ea0;
+	/*color: #eee;*/
+	color: #111;
+	margin:auto;
+	margin-bottom: 4px;
+	width: 100%;
+	height: 35px;
+}
+.button-orange:disabled{
+	border: 1px solid dimgray;
+	background-color: grey;
+}
+.slider-orange {
+	-webkit-appearance: none;
+	width: 99%;
+	height: 15px;
+	border-radius: 5px;
+	background: grey;
+	outline: none;
+	-webkit-transition: .2s;
+	transition: opacity .2s;
+	margin-bottom: 8px;
+}
+.slider-orange::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	/*background: #df4b26;*/
+	background: #5f9ea0;
+	cursor: pointer;
+}
+
+.slider-orange::-moz-range-thumb {
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	/*background: #df4b26;*/
+	background: #5f9ea0;
+	cursor: pointer;
+}
+#content {
+	margin: auto;
+	border-radius: 10px;
+	padding: 3px;
+}
+#footer{
+	text-align: center;
+	position: absolute;
+	bottom: 0;
+	left:0;
+	text-decoration: none;
+}
+h1{
+	text-align: left;
+	font-size: 52px;
+	font-family: 'Long Cang', cursive;
+	margin-bottom: 115px;
+	margin-top: -45px;
+}
+.preview
+{
+	position: relative;
+	border-color: gray;
+	border-style: solid;
+	border-radius: 3px;
+	border-width: 1px;
+	margin-bottom: 5px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	color: #5f9ea0;
+	background-color: #353535;
+}
+.preview-note
+{
+	position: absolute;
+	text-align: center;
+	font-size: 54px;
+	font-family: 'Long Cang', cursive;
+	padding-top: 42px;
+	width: 100%;
+}
+#mask {
+	display: block;
+	width: auto;
+	height: auto;
+	max-height: 70vh;
+	max-width: 90vw;
+}
+.galery-list
+{
+	padding: 0;
+}
+.galery-img
+{
+	display: block;
+	width: 100%;
+	margin: auto;
+	margin-bottom: 15px;
+	border-radius: 10px;
+	border: 1px solid gray;
+}
+li{
+	list-style: none;
+}
+.polaroid-frame {
+	/* TODO: Remove below on mobile? */
+	border-color: grey;
+	border-style: solid;
+	border-radius: 6px;
+	border-width: 3px;
+	background-color: #fefefe;
+	/* TODO: Remove above on mobile? */
+	padding: 3px;
+}
+#polaroid-footer
+{
+	height: auto;
+	/*background-color: #fff;*/
+}
+#img-galery
+{
+	display: none;
+}
+.img-busy
+{
+	filter: blur(8px);
+	animation-name: scanning;
+	animation-duration: 1s;
+	animation-direction: alternate;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out
+}
+@keyframes scanning {
+	from {filter: blur(8px);}
+	to {filter: blur(14px);}
+}
+@keyframes mask-fade {
+	from {opacity: 1;}
+	to {opacity: 0;}
+}
+.mask-finished
+{
+	animation-name: mask-fade;
+	animation-duration: 4s;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in-out;
+	animation-fill-mode: forwards;
+}
+.btn-hide
+{
+	visibility: hidden;
+}
+#Image
+{
+	display: block;
+	height: 500px;
+	width: 500px;
+	outline: none;
+	opacity: 0;
+}
+.close {
+	text-align: center;
+	color: white;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	margin-left: 10px;
+	margin-top: 10px;
+	position: absolute;
+	background-color: grey;
+	border-radius: 40px;
+	width: 30px;
+	height: 30px;
+	opacity: 0.6;
+	display: block;
+}
+
+.close:hover,
+.close:focus {
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
+}
+.img-box
+{
+	display: block;
+	margin: auto;
+	width: 80%;
+}
+
+/* added */
+.test-ad-banner
+{
+	display: block;
+	width: 320px;
+	height: 50px;
+	margin: auto;
+}
+.test-ad-frame
+{
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background-color: black;
+	margin:auto;
+}
+.test-ad-frame2
+{
+	top:0;
+	left: 0;
+	display: block;
+	padding-top: 50px;
+	position: fixed;
+	width: 100%;
+	margin: auto;
+	background-color: black;
+	height: 100%;
+	background-color: rgba(0,0,0,0.6);
+	z-index: 1;
+}
+
+.test-ad-intersitial
+{
+	display: block;
+	width: 300px;
+	height: 250px;
+	margin:auto;
+}
