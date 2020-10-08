@@ -1,16 +1,16 @@
-﻿using System;
-using Nancy;
+﻿using Nancy;
 using Nancy.ErrorHandling;
-using System.Linq;
-using Zavolokas.GdiExtensions;
-using Zavolokas.ImageProcessing.Inpainting;
-using Zavolokas.Structures;
-using System.Threading.Tasks;
-using Zavolokas.ImageProcessing.PatchMatch;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Zavolokas.GdiExtensions;
+using Zavolokas.ImageProcessing.Inpainting;
+using Zavolokas.ImageProcessing.PatchMatch;
+using Zavolokas.Structures;
 
 //TODO: Cleanup the mess above & unused References
 
@@ -22,84 +22,88 @@ namespace InpaintHTTP
         {
             Post("/api/inpaint", async x =>
             {
-                try{
-                Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] Incomming request from " + this.Request.UserHostAddress);
-                if (this.Request.Files.Count() < 2)
+                try
                 {
-                    Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + $"] Error, {this.Request.Files.Count()} files found");
-                    return "Err";
-                }
-                  
-                Bitmap BitmapImg = null, BitmapMask = null;
-                var donors = new List<ZsImage>();
-                foreach (var file in this.Request.Files)
-                {
-                    Bitmap tempBitmap;
-                    byte[] ByteImg = new byte[file.Value.Length];
-                    file.Value.Read(ByteImg, 0, (int)file.Value.Length);
-                    using (MemoryStream ms = new MemoryStream(ByteImg))
-                        tempBitmap = new Bitmap(ms);
-
-                    if (BitmapImg == null)
+                    Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] Incomming request from " + this.Request.UserHostAddress);
+                    if (this.Request.Files.Count() < 2)
                     {
-                        BitmapImg = tempBitmap;
+                        Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + $"] Error, {this.Request.Files.Count()} files found");
+                        return "Err";
                     }
-                    else if (BitmapMask == null)
+
+                    Bitmap BitmapImg = null, BitmapMask = null;
+                    var donors = new List<ZsImage>();
+                    foreach (var file in this.Request.Files)
                     {
-                        BitmapMask = tempBitmap;
+                        Bitmap tempBitmap;
+                        byte[] ByteImg = new byte[file.Value.Length];
+                        file.Value.Read(ByteImg, 0, (int)file.Value.Length);
+                        using (MemoryStream ms = new MemoryStream(ByteImg))
+                            tempBitmap = new Bitmap(ms);
+
+                        if (BitmapImg == null)
+                        {
+                            BitmapImg = tempBitmap;
+                        }
+                        else if (BitmapMask == null)
+                        {
+                            BitmapMask = tempBitmap;
+                        }
+                        else
+                        {
+                            donors.Add(tempBitmap.ToArgbImage());
+                        }
                     }
-                    else {
-                        donors.Add(tempBitmap.ToArgbImage());
-                    }
-                }
 
-                var imageArgb = ConvertToArgbImage(BitmapImg);
-                var markupArgb = ConvertToArgbImage(BitmapMask);
+                    var imageArgb = ConvertToArgbImage(BitmapImg);
+                    var markupArgb = ConvertToArgbImage(BitmapMask);
 
-                var inpainter = new Inpainter();
-                var settings = new InpaintSettings
-                {
-                    MaxInpaintIterations = 15,
-                    PatchDistanceCalculator = ImagePatchDistance.Cie76,
-                    PatchSize = 11
-                };
-                if (!Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out settings.MaxInpaintIterations))
-                {
-                    settings.MaxInpaintIterations = 15;
-                }
-                string patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
-                if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase)) {
-                  settings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
-                }
-                int patchSize;
-                if (Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize))
-                {
-                    settings.PatchSize = (byte)patchSize;
-                }
+                    var inpainter = new Inpainter();
+                    var settings = new InpaintSettings
+                    {
+                        MaxInpaintIterations = 15,
+                        PatchDistanceCalculator = ImagePatchDistance.Cie76,
+                        PatchSize = 11
+                    };
 
-                Image finalResult = null;
 
-                inpainter.IterationFinished += (sender, eventArgs) =>
-                {
-                    Bitmap iterationResult = eventArgs.InpaintedLabImage
-                        .FromLabToRgb()
-                        .FromRgbToBitmap();
-                    finalResult = iterationResult;
-                    Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] call on inpainter.IterationFinished (Level " + eventArgs.LevelIndex + ", Iteration " + eventArgs.InpaintIteration + ")"); //Debugging
-                };
+                    // amount of iterations will be run to find better values for the area to fill
+                    if (!Int32.TryParse(Request.Query["MAX_INPAINT_ITERATIONS"], out settings.MaxInpaintIterations))
+                        settings.MaxInpaintIterations = 15;
 
-                await Task.Factory.StartNew(() => inpainter.Inpaint(imageArgb, markupArgb, settings, donors));
+                    // determines the algorithm to use for calculating color differences
+                    string patchDistanceEnvVar = Request.Query["PATCH_DISTANCE_CALCULATOR"];
+                    if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
+                        settings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
 
-                Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] Processing finished");
+                    // PATCH_SIZE
+                    int patchSize;
+                    if (Int32.TryParse(Request.Query["PATCH_SIZE"], out patchSize))
+                        settings.PatchSize = (byte)patchSize;
+
+                    Image finalResult = null;
+
+                    inpainter.IterationFinished += (sender, eventArgs) =>
+                    {
+                        Bitmap iterationResult = eventArgs.InpaintedLabImage
+                            .FromLabToRgb()
+                            .FromRgbToBitmap();
+                        finalResult = iterationResult;
+                        Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] call on inpainter.IterationFinished (Level " + eventArgs.LevelIndex + ", Iteration " + eventArgs.InpaintIteration + ")"); //Debugging
+                    };
+
+                    await Task.Factory.StartNew(() => inpainter.Inpaint(imageArgb, markupArgb, settings, donors));
+
+                    Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] Processing finished");
 #if DEBUG
-                finalResult.Save(@"..\..\TESTAPP.PNG"); //Debugging
+                    finalResult.Save(@"..\..\TESTAPP.PNG"); //Debugging
 #endif
 
-                MemoryStream stream = new MemoryStream();
-                finalResult.Save(stream, ImageFormat.Png);
-                return Convert.ToBase64String(stream.ToArray()); //this does the job ¯\_(ツ)_/¯
+                    MemoryStream stream = new MemoryStream();
+                    finalResult.Save(stream, ImageFormat.Png);
+                    return Convert.ToBase64String(stream.ToArray()); //this does the job ¯\_(ツ)_/¯
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     return null;
@@ -118,10 +122,11 @@ namespace InpaintHTTP
         private static ZsImage ConvertToArgbImage(Bitmap imageBitmap)
         {
             double maxSize = 2048;
-            try {
+            try
+            {
                 maxSize = Int32.Parse(Environment.GetEnvironmentVariable("MAX_IMAGE_DIMENSION"));
             }
-            catch (ArgumentNullException) {}
+            catch (ArgumentNullException) { }
             catch (FormatException)
             {
                 Console.WriteLine("Invalid value for the MAX_IMAGE_DIMENSION. It must be an integer.");
@@ -131,7 +136,8 @@ namespace InpaintHTTP
                 Console.WriteLine("Invalid value for the MAX_IMAGE_DIMENSION. Out of 32-bit integer range.");
             }
 
-            if (maxSize > 0) {
+            if (maxSize > 0)
+            {
                 if (imageBitmap.Width > maxSize || imageBitmap.Height > maxSize)
                 {
                     var tmp = imageBitmap;
