@@ -68,17 +68,17 @@ namespace InpaintHTTP
 
 
                     // amount of iterations will be run to find better values for the area to fill
-                    if (!Int32.TryParse(Request.Query["MAX_INPAINT_ITERATIONS"], out settings.MaxInpaintIterations))
+                    if (!Int32.TryParse(Request.Form["MAX_INPAINT_ITERATIONS"], out settings.MaxInpaintIterations))
                         settings.MaxInpaintIterations = 15;
 
                     // determines the algorithm to use for calculating color differences
-                    string patchDistanceEnvVar = Request.Query["PATCH_DISTANCE_CALCULATOR"];
+                    string patchDistanceEnvVar = Request.Form["PATCH_DISTANCE_CALCULATOR"];
                     if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
                         settings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
 
                     // PATCH_SIZE
                     int patchSize;
-                    if (Int32.TryParse(Request.Query["PATCH_SIZE"], out patchSize))
+                    if (Int32.TryParse(Request.Form["PATCH_SIZE"], out patchSize))
                         settings.PatchSize = (byte)patchSize;
 
                     Image finalResult = null;

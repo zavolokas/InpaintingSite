@@ -33,8 +33,14 @@ var Inpaint = function () {
         var funcResult = null;
         var fd = new FormData();
 
+        // images
         fd.append('file',imagefile);
-        fd.append('file',maskfile);
+        fd.append('file', maskfile);
+
+        // params
+        fd.append('MAX_INPAINT_ITERATIONS', '15');
+        fd.append('PATCH_DISTANCE_CALCULATOR', 'Cie2000');
+        fd.append('PATCH_SIZE', '11');
 
         console.log("Started Request");
 
