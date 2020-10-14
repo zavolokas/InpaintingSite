@@ -11,8 +11,8 @@ using Zavolokas.GdiExtensions;
 using Zavolokas.ImageProcessing.Inpainting;
 using Zavolokas.ImageProcessing.PatchMatch;
 using Zavolokas.Structures;
-
-//TODO: Cleanup the mess above & unused References
+using Newtonsoft.Json;
+using Nancy.Extensions;
 
 namespace InpaintHTTP
 {
@@ -66,20 +66,34 @@ namespace InpaintHTTP
                         PatchSize = 11
                     };
 
+                    // Convert body request to settings
+                    InpaintSettings userSettings;
+                    try
+                    {
+                        userSettings = JsonConvert.DeserializeObject<InpaintSettings>(Request.Body.AsString());
+                    }
+                    catch { }
 
+                    
                     // amount of iterations will be run to find better values for the area to fill
-                    if (!Int32.TryParse(Request.Form["MAX_INPAINT_ITERATIONS"], out settings.MaxInpaintIterations))
-                        settings.MaxInpaintIterations = 15;
+                    if (!Int32.TryParse(Request.Form["MAX_INPAINT_ITERATIONS"], out settings.MaxInpaintIterations)) // set API value if present
+                        Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out settings.MaxInpaintIterations); // set environment default
 
                     // determines the algorithm to use for calculating color differences
                     string patchDistanceEnvVar = Request.Form["PATCH_DISTANCE_CALCULATOR"];
+                    if(patchDistanceEnvVar == null)
+                        patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
+
                     if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
                         settings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
 
                     // PATCH_SIZE
-                    int patchSize;
-                    if (Int32.TryParse(Request.Form["PATCH_SIZE"], out patchSize))
-                        settings.PatchSize = (byte)patchSize;
+                    int patchSize = settings.PatchSize;
+                    if (!Int32.TryParse(Request.Form["PATCH_SIZE"], out patchSize))
+                        Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize);
+
+                    settings.PatchSize = (byte)patchSize;
+
 
                     Image finalResult = null;
 
