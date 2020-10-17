@@ -130,7 +130,7 @@ namespace InpaintHTTP
                         Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] call on inpainter.IterationFinished (Level " + eventArgs.LevelIndex + ", Iteration " + eventArgs.InpaintIteration + ")"); //Debugging
                     };
 
-                    await Task.Factory.StartNew(() => inpainter.Inpaint(imageArgb, markupArgb, settings, donors));
+                    await Task.Factory.StartNew(() => inpainter.Inpaint(imageArgb, markupArgb, userSettings, donors));
 
                     Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] Processing finished");
 #if DEBUG
