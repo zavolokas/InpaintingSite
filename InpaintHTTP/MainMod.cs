@@ -18,8 +18,20 @@ namespace InpaintHTTP
 {
     public class MainMod : NancyModule
     {
+        public static InpaintSettings defaultSettings = new InpaintSettings();
         public MainMod()
         {
+            // init defaultSettings with environment variables
+            Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out defaultSettings.MaxInpaintIterations);
+
+            string patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
+            if(patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
+                defaultSettings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
+
+            int patchSize;
+            if(!Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize));
+                defaultSettings.PatchSize = (byte)patchSize;
+
             Post("/api/inpaint", async x =>
             {
                 try
@@ -59,40 +71,52 @@ namespace InpaintHTTP
                     var markupArgb = ConvertToArgbImage(BitmapMask);
 
                     var inpainter = new Inpainter();
-                    var settings = new InpaintSettings
-                    {
-                        MaxInpaintIterations = 15,
-                        PatchDistanceCalculator = ImagePatchDistance.Cie76,
-                        PatchSize = 11
-                    };
+
+                    // NOTE: This should no longer be used since the creation of InpaintSettings comes with default variables itself?
+                    //var settings = new InpaintSettings
+                    //{
+                    //    MaxInpaintIterations = 15,
+                    //    PatchDistanceCalculator = ImagePatchDistance.Cie76,
+                    //    PatchSize = 11
+                    //};
 
                     // Convert body request to settings
-                    InpaintSettings userSettings;
+                    InpaintSettings userSettings = new InpaintSettings();
                     try
                     {
                         userSettings = JsonConvert.DeserializeObject<InpaintSettings>(Request.Body.AsString());
                     }
                     catch { }
 
+                    // NOTE: Now merge then? giving priority to the default one?
+
+                    if (userSettings.PatchSize > defaultSettings.PatchSize)
+                        userSettings.PatchSize = defaultSettings.PatchSize;
+
+                    if (userSettings.MaxInpaintIterations > defaultSettings.MaxInpaintIterations)
+                        userSettings.MaxInpaintIterations = defaultSettings.MaxInpaintIterations;
+
+
+                    // NOTE: I think we can remove the old Forum propertys and use the above JSON parsed ones?
                     
-                    // amount of iterations will be run to find better values for the area to fill
-                    if (!Int32.TryParse(Request.Form["MAX_INPAINT_ITERATIONS"], out settings.MaxInpaintIterations)) // set API value if present
-                        Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out settings.MaxInpaintIterations); // set environment default
+                    //// amount of iterations will be run to find better values for the area to fill
+                    //if (!Int32.TryParse(Request.Form["MAX_INPAINT_ITERATIONS"], out settings.MaxInpaintIterations)) // set API value if present
+                    //    Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out settings.MaxInpaintIterations); // set environment default
 
-                    // determines the algorithm to use for calculating color differences
-                    string patchDistanceEnvVar = Request.Form["PATCH_DISTANCE_CALCULATOR"];
-                    if(patchDistanceEnvVar == null)
-                        patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
+                    //// determines the algorithm to use for calculating color differences
+                    //string patchDistanceEnvVar = Request.Form["PATCH_DISTANCE_CALCULATOR"];
+                    //if(patchDistanceEnvVar == null)
+                    //    patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
 
-                    if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
-                        settings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
+                    //if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
+                    //    settings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
 
-                    // PATCH_SIZE
-                    int patchSize = settings.PatchSize;
-                    if (!Int32.TryParse(Request.Form["PATCH_SIZE"], out patchSize))
-                        Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize);
+                    //// PATCH_SIZE
+                    //int patchSize = settings.PatchSize;
+                    //if (!Int32.TryParse(Request.Form["PATCH_SIZE"], out patchSize))
+                    //    Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize);
 
-                    settings.PatchSize = (byte)patchSize;
+                    //settings.PatchSize = (byte)patchSize;
 
 
                     Image finalResult = null;
