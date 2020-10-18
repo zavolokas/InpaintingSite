@@ -32,15 +32,16 @@ namespace InpaintHTTP
         private void InitInpaintSettings()
         {
             // init defaultSettings with environment variables for Inpainting Settings
-            Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out InpaintSettings.MaxInpaintIterations);
+            this.InpaintSettings = new InpaintSettings();
+            Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out this.InpaintSettings.MaxInpaintIterations);
 
             string patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
             if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
-                InpaintSettings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
+                this.InpaintSettings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
 
             int patchSize;
-            if (!Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize)) ;
-            InpaintSettings.PatchSize = (byte)patchSize;
+            if (!Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize) && patchSize != 0)
+                this.InpaintSettings.PatchSize = (byte)patchSize;
         }
 
     }
@@ -105,6 +106,8 @@ namespace InpaintHTTP
                     catch { }
 
                     // NOTE: Now merge then? giving priority to the default one?
+                    if (ApiSettings._Instance == null)
+                        new ApiSettings();
 
                     if (userSettings.PatchSize > ApiSettings._Instance.InpaintSettings.PatchSize)
                         userSettings.PatchSize = ApiSettings._Instance.InpaintSettings.PatchSize;
@@ -150,7 +153,7 @@ namespace InpaintHTTP
 
                     Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] Processing finished");
 #if DEBUG
-                    finalResult.Save(@"..\..\TESTAPP.PNG"); //Debugging
+                    //finalResult.Save(@"..\..\TESTAPP.PNG"); //Debugging
 #endif
 
                     MemoryStream stream = new MemoryStream();
