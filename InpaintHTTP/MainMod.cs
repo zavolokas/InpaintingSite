@@ -10,28 +10,44 @@ using System.Threading.Tasks;
 using Zavolokas.GdiExtensions;
 using Zavolokas.ImageProcessing.Inpainting;
 using Zavolokas.ImageProcessing.PatchMatch;
+//using Zavolokas.SeamCarving; // TODO: fix package
 using Zavolokas.Structures;
 using Newtonsoft.Json;
 using Nancy.Extensions;
 
 namespace InpaintHTTP
 {
-    public class MainMod : NancyModule
+    public class ApiSettings
     {
-        public static InpaintSettings defaultSettings = new InpaintSettings();
-        public MainMod()
+        public static ApiSettings _Instance { get; private set; }
+        public InpaintSettings InpaintSettings { get; set; }
+        
+        // TODO: add Seamcarving Settings to the ApiSettings object ;D
+
+        public ApiSettings()
         {
-            // init defaultSettings with environment variables
-            Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out defaultSettings.MaxInpaintIterations);
+            _Instance = this;
+            InitInpaintSettings();
+        }
+        private void InitInpaintSettings()
+        {
+            // init defaultSettings with environment variables for Inpainting Settings
+            Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out InpaintSettings.MaxInpaintIterations);
 
             string patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
-            if(patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
-                defaultSettings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
+            if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
+                InpaintSettings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
 
             int patchSize;
-            if(!Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize));
-                defaultSettings.PatchSize = (byte)patchSize;
+            if (!Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize)) ;
+            InpaintSettings.PatchSize = (byte)patchSize;
+        }
 
+    }
+    public class MainMod : NancyModule
+    {
+        public MainMod()
+        {
             Post("/api/inpaint", async x =>
             {
                 try
@@ -90,11 +106,11 @@ namespace InpaintHTTP
 
                     // NOTE: Now merge then? giving priority to the default one?
 
-                    if (userSettings.PatchSize > defaultSettings.PatchSize)
-                        userSettings.PatchSize = defaultSettings.PatchSize;
+                    if (userSettings.PatchSize > ApiSettings._Instance.InpaintSettings.PatchSize)
+                        userSettings.PatchSize = ApiSettings._Instance.InpaintSettings.PatchSize;
 
-                    if (userSettings.MaxInpaintIterations > defaultSettings.MaxInpaintIterations)
-                        userSettings.MaxInpaintIterations = defaultSettings.MaxInpaintIterations;
+                    if (userSettings.MaxInpaintIterations > ApiSettings._Instance.InpaintSettings.MaxInpaintIterations)
+                        userSettings.MaxInpaintIterations = ApiSettings._Instance.InpaintSettings.MaxInpaintIterations;
 
 
                     // NOTE: I think we can remove the old Forum propertys and use the above JSON parsed ones?
@@ -146,6 +162,11 @@ namespace InpaintHTTP
                     Console.WriteLine(ex.Message);
                     return null;
                 }
+            });
+
+            Get("/api/settings", async x =>
+            {
+                return Response.AsJson<ApiSettings>(ApiSettings._Instance);
             });
 
             Get(@"/", _ =>
