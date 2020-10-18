@@ -33,7 +33,10 @@ namespace InpaintHTTP
         {
             // init defaultSettings with environment variables for Inpainting Settings
             this.InpaintSettings = new InpaintSettings();
-            Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out this.InpaintSettings.MaxInpaintIterations);
+
+            int maxInpaintIterations = 0;
+            if (!Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out maxInpaintIterations) && maxInpaintIterations != 0)
+                this.InpaintSettings.MaxInpaintIterations = maxInpaintIterations;
 
             string patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
             if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
