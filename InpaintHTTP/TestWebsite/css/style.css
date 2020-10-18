@@ -6,12 +6,9 @@ body {
 	width: 100%;
 	/* height: 100%; buggy */
 	margin: auto;
-	background-color: #bdbdbd;
-	/* Add cool background and some crayons to fill the empty space? 
-	background-color: #fff;
-	background-image: linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px), linear-gradient(#eee .1em, transparent .1em);
+	background-color: #e5e5e5;
+	background-image: linear-gradient(90deg, transparent 79px, #5f9ea0 79px, #5f9ea0 81px, transparent 81px), linear-gradient(#d4d4d4 .1em, transparent .1em);
 	background-size: 100% 1.2em;
-	*/
 }
 .content {
 	width: auto;
@@ -79,12 +76,14 @@ body {
 	border-radius: 10px;
 	padding: 3px;
 }
-#footer{
+#footer {
 	text-align: center;
 	position: absolute;
-	bottom: 0;
-	left:0;
+	top: 0;
+	left: 4px;
 	text-decoration: none;
+	line-height: 21px; /* 9+10 */
+	font-family: cursive;
 }
 h1{
 	text-align: left;
@@ -144,14 +143,13 @@ li{
 	list-style: none;
 }
 .polaroid-frame {
-	/* TODO: Remove below on mobile? */
 	border-color: grey;
 	border-style: solid;
 	border-radius: 6px;
 	border-width: 3px;
 	background-color: #fefefe;
-	/* TODO: Remove above on mobile? */
 	padding: 3px;
+	box-shadow: 6px 6px 5px #000000ad;
 }
 #polaroid-footer
 {
@@ -292,9 +290,12 @@ li{
 	#Image{
 		width: 95vw;
 	}
-	/*.polaroid-frame{
-		border-width: 0;
-		border-radius: 0;
-		padding: 0;
-	}*/
+	.polaroid-frame {
+		box-shadow: 0;
+	}
+	#footer {
+		top: auto;
+		left: 4px;
+		bottom: 0;
+	}
 }
