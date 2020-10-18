@@ -24,7 +24,7 @@ namespace InpaintHTTP
         
         // TODO: add Seamcarving Settings to the ApiSettings object ;D
         
-        public static void Initialise()
+        public static void Initialize()
         {
             _Instance = new ApiSettings();
         }
@@ -57,7 +57,7 @@ namespace InpaintHTTP
         public MainMod()
         {
             // initialize default settings
-            ApiSettings.Initialise();
+            ApiSettings.Initialize();
 
             Post("/api/inpaint", async x =>
             {
