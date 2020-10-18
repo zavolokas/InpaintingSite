@@ -106,7 +106,14 @@ h1{
 	color: #5f9ea0;
 	background-color: #353535;
 }
-.preview-note
+.preview-galery
+{
+	overflow-y: scroll;
+	height: 80vh;
+	width: 750px;
+}
+
+.preview-note 
 {
 	position: absolute;
 	text-align: center;
@@ -156,6 +163,9 @@ li{
 #img-galery
 {
 	display: none;
+	margin: auto;
+	border-radius: 10px;
+	padding: 3px;
 }
 .img-busy
 {
