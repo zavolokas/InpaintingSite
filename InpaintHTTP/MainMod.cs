@@ -23,10 +23,14 @@ namespace InpaintHTTP
         public InpaintSettings InpaintSettings { get; set; }
         
         // TODO: add Seamcarving Settings to the ApiSettings object ;D
+        
+        public static void Initialise()
+        {
+            _Instance = new ApiSettings();
+        }
 
         public ApiSettings()
         {
-            _Instance = this;
             InitInpaintSettings();
         }
         private void InitInpaintSettings()
@@ -52,6 +56,9 @@ namespace InpaintHTTP
     {
         public MainMod()
         {
+            // initialize default settings
+            ApiSettings.Initialise();
+
             Post("/api/inpaint", async x =>
             {
                 try
@@ -92,14 +99,6 @@ namespace InpaintHTTP
 
                     var inpainter = new Inpainter();
 
-                    // NOTE: This should no longer be used since the creation of InpaintSettings comes with default variables itself?
-                    //var settings = new InpaintSettings
-                    //{
-                    //    MaxInpaintIterations = 15,
-                    //    PatchDistanceCalculator = ImagePatchDistance.Cie76,
-                    //    PatchSize = 11
-                    //};
-
                     // Convert body request to settings
                     InpaintSettings userSettings = new InpaintSettings();
                     try
@@ -108,37 +107,12 @@ namespace InpaintHTTP
                     }
                     catch { }
 
-                    // NOTE: Now merge then? giving priority to the default one?
-                    if (ApiSettings._Instance == null)
-                        new ApiSettings();
-
+                    // Now merge then, giving priority to the default
                     if (userSettings.PatchSize > ApiSettings._Instance.InpaintSettings.PatchSize)
                         userSettings.PatchSize = ApiSettings._Instance.InpaintSettings.PatchSize;
 
                     if (userSettings.MaxInpaintIterations > ApiSettings._Instance.InpaintSettings.MaxInpaintIterations)
                         userSettings.MaxInpaintIterations = ApiSettings._Instance.InpaintSettings.MaxInpaintIterations;
-
-
-                    // NOTE: I think we can remove the old Forum propertys and use the above JSON parsed ones?
-                    
-                    //// amount of iterations will be run to find better values for the area to fill
-                    //if (!Int32.TryParse(Request.Form["MAX_INPAINT_ITERATIONS"], out settings.MaxInpaintIterations)) // set API value if present
-                    //    Int32.TryParse(Environment.GetEnvironmentVariable("MAX_INPAINT_ITERATIONS"), out settings.MaxInpaintIterations); // set environment default
-
-                    //// determines the algorithm to use for calculating color differences
-                    //string patchDistanceEnvVar = Request.Form["PATCH_DISTANCE_CALCULATOR"];
-                    //if(patchDistanceEnvVar == null)
-                    //    patchDistanceEnvVar = Environment.GetEnvironmentVariable("PATCH_DISTANCE_CALCULATOR");
-
-                    //if (patchDistanceEnvVar != null && patchDistanceEnvVar.Equals("Cie2000", StringComparison.OrdinalIgnoreCase))
-                    //    settings.PatchDistanceCalculator = ImagePatchDistance.Cie2000;
-
-                    //// PATCH_SIZE
-                    //int patchSize = settings.PatchSize;
-                    //if (!Int32.TryParse(Request.Form["PATCH_SIZE"], out patchSize))
-                    //    Int32.TryParse(Environment.GetEnvironmentVariable("PATCH_SIZE"), out patchSize);
-
-                    //settings.PatchSize = (byte)patchSize;
 
 
                     Image finalResult = null;
@@ -156,7 +130,7 @@ namespace InpaintHTTP
 
                     Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] Processing finished");
 #if DEBUG
-                    //finalResult.Save(@"..\..\TESTAPP.PNG"); //Debugging
+                    finalResult.Save(@"..\..\TESTAPP.PNG"); //Debugging
 #endif
 
                     MemoryStream stream = new MemoryStream();
