@@ -38,9 +38,7 @@ var Inpaint = function () {
         fd.append('file', maskfile);
 
         // params
-        fd.append('MAX_INPAINT_ITERATIONS', '15');
-        fd.append('PATCH_DISTANCE_CALCULATOR', 'Cie2000');
-        fd.append('PATCH_SIZE', '11');
+        // TODO: add JSON parameters to body
 
         console.log("Started Request");
 
