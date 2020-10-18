@@ -33,8 +33,17 @@ var Inpaint = function () {
         var funcResult = null;
         var fd = new FormData();
 
+<<<<<<< HEAD
         fd.append('file',imagefile);
         fd.append('file',maskfile);
+=======
+        // images
+        fd.append('file',imagefile);
+        fd.append('file', maskfile);
+
+        // params
+        // TODO: add JSON parameters to body
+>>>>>>> 296617925d4ded1d314fa0184c05513b99d9c61d
 
         console.log("Started Request");
 
