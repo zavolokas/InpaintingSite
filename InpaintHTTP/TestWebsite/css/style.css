@@ -198,7 +198,7 @@ li{
 {
 	display: block;
 	height: 500px;
-	width: 500px;
+	width: 470px;
 	outline: none;
 	opacity: 0;
 }
@@ -269,4 +269,32 @@ li{
 	width: 300px;
 	height: 250px;
 	margin:auto;
+}
+
+/* Full-screen on mobile for optimal screen usage */
+@media screen and (max-width: 480px) {
+	.content
+	{
+		max-height: 100%;
+		padding: 0;
+	}
+	#content {
+		padding: 0;
+	}
+	#canvas {
+		max-width: 100%;
+		max-height: 100%;
+	}
+	.preview-galery {
+		height: 100%;
+		width: 100%;
+	}
+	#Image{
+		width: 95vw;
+	}
+	/*.polaroid-frame{
+		border-width: 0;
+		border-radius: 0;
+		padding: 0;
+	}*/
 }
