@@ -107,8 +107,8 @@ $(function(){
         console.log("mouseleave " + maskHandler.paints());
         maskHandler.OnMouseLeave(e);
     }).mouseup(function (e) {
-        console.log("mouseleave " + maskHandler.paints());
-        maskHandler.OnMouseUp(e);
+        console.log("mouseup " + maskHandler.paints());
+        maskHandler.OnMouseUp(e); 
     }
     // Mobile Mouse Movement Events
     ).on({'touchstart': function (e) {

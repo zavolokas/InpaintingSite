@@ -117,7 +117,7 @@ let maskHandler = function () {
             context.beginPath();
             context.lineWidth = dotWidth[i];
             if (clickX[i] === dotX && clickY[i] === dotY)
-                context.strokeStyle = color;
+                context.strokeStyle = "#5f9ea0";
             if (clickDrag[i] && i) {
                 context.moveTo(clickX[i - 1], clickY[i - 1]);
             } else {
@@ -197,7 +197,11 @@ let maskHandler = function () {
                 _addClick(lastClickX, lastClickY);
                 _initDot(lastClickX, lastClickY);
             } else {
-                _killDot();
+                let dist = Math.sqrt(((lastClickX - dotX) * (lastClickX - dotX)) + ((lastClickY - dotY) * (lastClickY - dotY))); _killDot();
+                if (dist <= sLineWidth * 0.55) {
+                    _killDot();
+                    console.log("kill");
+                }
             }
             _reDraw();
         } else if (e.originalEvent.changedTouches) // mobile detected
@@ -223,7 +227,7 @@ let maskHandler = function () {
         if (paint) {
             if (e.pageX) {
                 if (_isDotActive()) {
-                    //Do math :D
+                    //Do math :D - Desktop
                     let newDotX = dotX + (((e.pageX - offsetLeft) * f) - lastClickX);
                     let newDotY = dotY + (((e.pageY - offsetTop) * f) - lastClickY);
 
@@ -238,7 +242,7 @@ let maskHandler = function () {
                 _reDraw();
             } else if (e.originalEvent.changedTouches) {
                 if (_isDotActive()) {
-                    //Do Math :D
+                    //Do Math :D - Mobile (With Dot)
                     let newDotX = dotX + (((e.originalEvent.changedTouches[0].pageX - offsetLeft) * f) - lastClickX);
                     let newDotY = dotY + (((e.originalEvent.changedTouches[0].pageY - offsetTop) * f) - lastClickY);
 
@@ -256,12 +260,18 @@ let maskHandler = function () {
 
     let _OnMouseUp = function (e) {
         paint = false;
-        _killDot();
+        if (e.pageX) {
+            _killDot(); // desktop detected
+            _reDraw(); // visually remove dot
+        }
     };
 
     let _OnMouseLeave = function (e) {
         paint = false;
-        _killDot();
+        if (e.pageX) {
+            _killDot(); // desktop detected
+            _reDraw(); // visually remove dot
+        }
     };
 
     let _getCanvas = function () {
