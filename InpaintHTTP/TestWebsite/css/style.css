@@ -106,18 +106,12 @@ h1{
 	color: #5f9ea0;
 	background-color: #353535;
 }
-<<<<<<< HEAD
-.preview-note
-=======
-.preview-galery
-{
+.preview-galery {
 	overflow-y: scroll;
 	height: 80vh;
-	width: 750px;
+	width: 70vw;
 }
-
 .preview-note 
->>>>>>> 296617925d4ded1d314fa0184c05513b99d9c61d
 {
 	position: absolute;
 	text-align: center;
@@ -167,12 +161,9 @@ li{
 #img-galery
 {
 	display: none;
-<<<<<<< HEAD
-=======
 	margin: auto;
 	border-radius: 10px;
 	padding: 3px;
->>>>>>> 296617925d4ded1d314fa0184c05513b99d9c61d
 }
 .img-busy
 {
