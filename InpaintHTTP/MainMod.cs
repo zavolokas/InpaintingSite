@@ -19,6 +19,7 @@ namespace InpaintHTTP
 {
     public class ApiSettings
     {
+        public string SelectedAlgorithm { get; set; } // only used in incomming requests from users
         public static ApiSettings _Instance { get; private set; }
         public InpaintSettings InpaintSettings { get; set; }
         
@@ -100,19 +101,25 @@ namespace InpaintHTTP
                     var inpainter = new Inpainter();
 
                     // Convert body request to settings
-                    InpaintSettings userSettings = new InpaintSettings();
+                    ApiSettings userSettings = new ApiSettings();
                     try
                     {
-                        userSettings = JsonConvert.DeserializeObject<InpaintSettings>(Request.Body.AsString());
+                        //Console.WriteLine(Request.B .Form['body']);
+                        var data = this.Request.Form["body"];
+                        if(data != null)
+                            userSettings = JsonConvert.DeserializeObject<ApiSettings>(data);
                     }
-                    catch { }
+                    catch (Exception e) 
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
 
                     // Now merge then, giving priority to the default
-                    if (userSettings.PatchSize > ApiSettings._Instance.InpaintSettings.PatchSize)
-                        userSettings.PatchSize = ApiSettings._Instance.InpaintSettings.PatchSize;
+                    if (userSettings.InpaintSettings.PatchSize > ApiSettings._Instance.InpaintSettings.PatchSize)
+                        userSettings.InpaintSettings.PatchSize = ApiSettings._Instance.InpaintSettings.PatchSize;
 
-                    if (userSettings.MaxInpaintIterations > ApiSettings._Instance.InpaintSettings.MaxInpaintIterations)
-                        userSettings.MaxInpaintIterations = ApiSettings._Instance.InpaintSettings.MaxInpaintIterations;
+                    if (userSettings.InpaintSettings.MaxInpaintIterations > ApiSettings._Instance.InpaintSettings.MaxInpaintIterations)
+                        userSettings.InpaintSettings.MaxInpaintIterations = ApiSettings._Instance.InpaintSettings.MaxInpaintIterations;
 
 
                     Image finalResult = null;
@@ -126,7 +133,7 @@ namespace InpaintHTTP
                         Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] call on inpainter.IterationFinished (Level " + eventArgs.LevelIndex + ", Iteration " + eventArgs.InpaintIteration + ")"); //Debugging
                     };
 
-                    await Task.Factory.StartNew(() => inpainter.Inpaint(imageArgb, markupArgb, userSettings, donors));
+                    await Task.Factory.StartNew(() => inpainter.Inpaint(imageArgb, markupArgb, userSettings.InpaintSettings, donors));
 
                     Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fffff") + "] Processing finished");
 #if DEBUG

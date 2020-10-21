@@ -165,7 +165,7 @@ li{
 	box-shadow: 6px 6px 5px #000000ad;
 }
 .polaroid-buttons {
-	max-height: 152px;
+	height: 152px;
 }
 .button-box {
 	margin: auto;
