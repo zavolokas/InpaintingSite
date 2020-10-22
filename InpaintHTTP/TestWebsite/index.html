@@ -23,11 +23,11 @@
 						</div>
 						<!-- <div id="polaroid-footer"> -->
 						<div id="polaroid-footer">
-							<div class="polaroid-buttons" style="height: 152px;">
+							<div class="polaroid-buttons" style="height: 152px; position: relative">
 								<div class="slider-box">
-									<input class="slider-orange masksize-slider" type="range" min="10" max="70" value="20" orient="vertical" id="masksize-slider">
-									<input class="slider-orange max-iterations-slider" type="range" min="1" max="15" value="2" orient="vertical" id="max-iterations-slider">
-									<input class="slider-orange patch-size-slider" type="range" min="1" max="11" value="2" orient="vertical" id="patch-size-slider">
+									<input class="slider-orange masksize-slider" orient="vertical" type="range" min="10" max="70" value="20" id="masksize-slider">
+									<input style="background-color: darkred" class="slider-orange max-iterations-slider" orient="vertical" type="range" min="2" max="15" value="2" id="max-iterations-slider">
+									<input style="background-color: darkblue" class="slider-orange patch-size-slider" orient="vertical" type="range" min="2" max="11" value="2" id="patch-size-slider">
 								</div>
 								<div class="button-box">
 									<input style="width: 50%;margin: auto;display: block;float: left;margin-bottom 4px;" type="button" class="button-orange" id="inpaint" value="Inpaint" />
