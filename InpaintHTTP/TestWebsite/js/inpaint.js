@@ -40,7 +40,7 @@ var Inpaint = function () {
         fd.append('body', JSON.stringify({
             SelectedAlgorithm: "Inpaint",
             InpaintSettings: {
-                PatchDistanceCalculator: $('#patch-distance-calcuator-slider').val(),
+                // PatchDistanceCalculator: $('#patch-distance-calculator').val(), // NOTE: backend cant deserialise this
                 MaxInpaintIterations: parseInt($('#max-iterations-slider').val()),
                 PatchMatch: {
                     PatchSize: parseInt($('#patch-size-slider').val())

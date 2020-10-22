@@ -23,11 +23,11 @@
 						</div>
 						<!-- <div id="polaroid-footer"> -->
 						<div id="polaroid-footer">
-							<div class="polaroid-buttons">
+							<div class="polaroid-buttons" style="height: 152px;">
 								<div class="slider-box">
 									<input class="slider-orange masksize-slider" type="range" min="10" max="70" value="20" orient="vertical" id="masksize-slider">
-									<input class="slider-orange max-iterations-slider" type="range" min="1" max="15" value="50" orient="vertical" id="max-iterations-slider">
-									<input class="slider-orange patch-size-slider" type="range" min="1" max="11" value="11" orient="vertical" id="patch-size-slider">
+									<input class="slider-orange max-iterations-slider" type="range" min="1" max="15" value="2" orient="vertical" id="max-iterations-slider">
+									<input class="slider-orange patch-size-slider" type="range" min="1" max="11" value="2" orient="vertical" id="patch-size-slider">
 								</div>
 								<div class="button-box">
 									<input style="width: 50%;margin: auto;display: block;float: left;margin-bottom 4px;" type="button" class="button-orange" id="inpaint" value="Inpaint" />
@@ -35,8 +35,9 @@
 									<input style="width: 50%;margin: auto;display: block;float: left;margin-bottom: 4px;" type="button" class="button-orange" id="reset" value="Reset" />
 									<input style="width: 50%;margin: auto;display: block;float: left;margin-bottom: 4px;" type="button" class="button-orange" id="undo" value="Undo" />
 									<input style="width: 50%;margin: auto;display: block;float: left;margin-bottom: 4px;" type="button" class="button-orange" id="galery" value="Gallery" />
-									<select style="width: 50%;margin: auto;display: block;float: left;margin-bottom: 4px;" class="patch-distance-calculator-slider" id="patch-distance-calculator-slider">
+									<select style="width: 50%;margin: auto;display: block;float: left;margin-bottom: 4px;" class="patch-distance-calculator" id="patch-distance-calculator">
 										<option value="Cie2000">Cie2000</option>
+										<option value="Cie76">Cie76</option>
 									</select>
 								</div>
 							</div>
