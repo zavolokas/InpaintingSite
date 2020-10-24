@@ -46,6 +46,15 @@ $(function(){
 
     $("#masksize-slider").change(function(){
         maskHandler.setLineWidth(this.value);
+        $('#paint-size-value').text('(' + this.value + ')');
+    });
+
+    $("#max-iterations-slider").change(function () {
+        $('#max-iterations-value').text('(' + this.value + ')');
+    });
+
+    $("#patch-size-slider").change(function () {
+        $('#patch-size-value').text('(' + this.value + ')');
     });
 
     $("#reset").click(function(){
@@ -107,8 +116,8 @@ $(function(){
         console.log("mouseleave " + maskHandler.paints());
         maskHandler.OnMouseLeave(e);
     }).mouseup(function (e) {
-        console.log("mouseleave " + maskHandler.paints());
-        maskHandler.OnMouseUp(e);
+        console.log("mouseup " + maskHandler.paints());
+        maskHandler.OnMouseUp(e); 
     }
     // Mobile Mouse Movement Events
     ).on({'touchstart': function (e) {

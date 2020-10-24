@@ -14,7 +14,7 @@ var Inpaint = function () {
 
         if(result == null)
         {
-            //Do correct error handeling... or prevent user from clicking #Inpaint when no img is selected
+            //TODO: Do correct error handeling... or prevent user from clicking #Inpaint when no img is selected
             callback();
             return;
         }
@@ -37,8 +37,16 @@ var Inpaint = function () {
         fd.append('file',imagefile);
         fd.append('file', maskfile);
 
-        // params
-        // TODO: add JSON parameters to body
+        fd.append('body', JSON.stringify({
+            SelectedAlgorithm: "Inpaint",
+            InpaintSettings: {
+                // PatchDistanceCalculator: $('#patch-distance-calculator').val(), // NOTE: backend cant deserialise this
+                MaxInpaintIterations: parseInt($('#max-iterations-slider').val()),
+                PatchMatch: {
+                    PatchSize: parseInt($('#patch-size-slider').val())
+                }
+            }
+        }));
 
         console.log("Started Request");
 
